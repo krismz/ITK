@@ -1,21 +1,19 @@
 project(ITKGPUCommon)
-itk_module_impl()
 
+if (ITK_USE_GPU)
+  find_package ( OpenCL REQUIRED )
+  if ( NOT ${OPENCL_FOUND} )
+     message ( FATAL "Could not find OpenCL" )
+  endif ()
 
-IF (ITK_USE_GPU)
-  FIND_PACKAGE ( OpenCL REQUIRED )
-  IF ( NOT ${OPENCL_FOUND} )
-     MESSAGE ( FATAL "Could not find OpenCL" )
-  ENDIF ()
+  file(GLOB itkGPUSRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cl)
+  file(GLOB itkGPUHDR ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+  file(GLOB itkTxxSRC ${CMAKE_CURRENT_SOURCE_DIR}/include/*.txx)
 
-  FILE(GLOB itkGPUSRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cl)
-  FILE(GLOB itkGPUHDR ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
-  FILE(GLOB itkTxxSRC ${CMAKE_CURRENT_SOURCE_DIR}/include/*.txx)
+  source_group("OpenCL Source Files" FILES ${itkGPUSRC})
 
-  SOURCE_GROUP("OpenCL Source Files" FILES ${itkGPUSRC})
-
-  FILE(COPY ${itkGPUSRC} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/OpenCL)
-  MESSAGE( "OpenCL files to copy " ${itkGPUSRC} )
+  file(COPY ${itkGPUSRC} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/OpenCL)
+  message( "OpenCL files to copy " ${itkGPUSRC} )
 
 
   #configure_file(
@@ -23,5 +21,8 @@ IF (ITK_USE_GPU)
   #  pathToOpenCLSourceCode.h)
 
   set(ITKGPUCommon_LIBRARIES ITKGPUCommon)
+  set(ITKGPUCommon_SYSTEM_INCLUDE_DIRS ${OPENCL_INCLUDE_DIRS})
+  set(ITKGPUCommon_SYSTEM_LIBRARY_DIRS ${OPENCL_LIBRARIES})
+endif(ITK_USE_GPU)
 
-ENDIF(ITK_USE_GPU)
+itk_module_impl()

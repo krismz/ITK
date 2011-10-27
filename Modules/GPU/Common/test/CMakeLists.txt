@@ -1,4 +1,4 @@
-IF (ITK_USE_GPU)
+if (ITK_USE_GPU)
 
 # With MS compilers on Win64, we need the /bigobj switch, else generated
 # code results in objects with number of sections exceeding object file
@@ -22,53 +22,51 @@ itkGPUImageFilterTest.cxx
 # itkGPUDemonsRegistrationFilterTest.cxx
  )
 
-include_directories(${OPENCL_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/../)
-
 CreateTestDriver(ITKGPUCommon "${ITKGPUCommon-Test_LIBRARIES}" "${ITKGPUCommon-tests}")
 
-add_test(NAME itkGPUImageFilterTest
+itk_add_test(NAME itkGPUImageFilterTest
         COMMAND ITKGPUCommonTestDriver itkGPUImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
         ${ITK_TEST_OUTPUT_DIR}/gpuImageFilterTest.png)
 
-#add_test(NAME itkGPUImageTest COMMAND ITKGPUCommonTestDriver itkGPUImageTest)
+#itk_add_test(NAME itkGPUImageTest COMMAND ITKGPUCommonTestDriver itkGPUImageTest)
 #
 #temporary test
-#add_test(NAME itkGPUImageFilterTestTemp
+#itk_add_test(NAME itkGPUImageFilterTestTemp
 #        COMMAND ITKGPUCommonTestDriver itkGPUImageFilterTestTemp
 #        ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
 #        ${ITK_TEST_OUTPUT_DIR}/gpuImageFilterTest.png)
 
-add_test(NAME itkGPUMeanImageFilterTest
+itk_add_test(NAME itkGPUMeanImageFilterTest
         COMMAND ITKGPUCommonTestDriver itkGPUMeanImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
         ${ITK_TEST_OUTPUT_DIR}/gpuMeanImageFilterTest.png)
 
-add_test(NAME itkGPUBinaryThresholdImageFilterTest
+itk_add_test(NAME itkGPUBinaryThresholdImageFilterTest
         COMMAND ITKGPUCommonTestDriver itkGPUBinaryThresholdImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
         ${ITK_TEST_OUTPUT_DIR}/gpuBinaryThresholdImageFilterTest.png)
 
-add_test(NAME itkGPUNeighborhoodOperatorImageFilterTest
+itk_add_test(NAME itkGPUNeighborhoodOperatorImageFilterTest
         COMMAND ITKGPUCommonTestDriver itkGPUNeighborhoodOperatorImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
         ${ITK_TEST_OUTPUT_DIR}/gpuNeighborhoodOperatorImageFilterTest.mha)
 
-add_test(NAME itkGPUDiscreteGaussianImageFilterTest
+itk_add_test(NAME itkGPUDiscreteGaussianImageFilterTest
         COMMAND ITKGPUCommonTestDriver itkGPUDiscreteGaussianImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
         ${ITK_TEST_OUTPUT_DIR}/gpuGradientDiscreteGaussianImageFilterTest.mha)
 
-add_test(NAME itkGPUGradientAnisotropicDiffusionImageFilterTest
+itk_add_test(NAME itkGPUGradientAnisotropicDiffusionImageFilterTest
         COMMAND ITKGPUCommonTestDriver itkGPUGradientAnisotropicDiffusionImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
         ${ITK_TEST_OUTPUT_DIR}/gpuGradientAnisotropicDiffusionImageFilterTest.mha)
 
-#add_test(NAME itkGPUDemonsRegistrationFilterTest
+#itk_add_test(NAME itkGPUDemonsRegistrationFilterTest
 #        COMMAND ITKGPUCommonTestDriver itkGPUDemonsRegistrationFilterTest
 #        ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
 #        ${ITK_TEST_OUTPUT_DIR}/gpuImageFilterTest.png
 #        ${ITK_TEST_OUTPUT_DIR}/output)
 
 
-ENDIF(ITK_USE_GPU)
+endif(ITK_USE_GPU)
