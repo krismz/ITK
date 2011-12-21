@@ -25,7 +25,7 @@
 //
 #ifdef DIM_1
 #define ImageDimension 1
-__kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYPE *buf, PIXELTYPE K, float scalex, int width)
+__kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYPE *buf, ARGTYPE K, float scalex, int width)
 {
   int gix = get_global_id(0);
 
@@ -42,7 +42,7 @@ __kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYP
 //
 #ifdef DIM_2
 #define ImageDimension 2
-__kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYPE *buf, PIXELTYPE K, float scalex, float scaley, int width, int height)
+__kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYPE *buf, ARGTYPE K, float scalex, float scaley, int width, int height)
 {
   // global index
   int gix = get_global_id(0);
@@ -152,7 +152,7 @@ __kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYP
 //
 #ifdef DIM_3
 #define ImageDimension 3
-__kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYPE *buf, PIXELTYPE K, float scalex, float scaley, float scalez, int width, int height, int depth)
+__kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYPE *buf, ARGTYPE K, float scalex, float scaley, float scalez, int width, int height, int depth)
 {
   int gix = get_global_id(0);
   int giy = get_global_id(1);

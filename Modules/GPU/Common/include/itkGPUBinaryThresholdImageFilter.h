@@ -85,6 +85,9 @@ private:
 };
 } // end of namespace Functor
 
+/** Create a helper GPU Kernel class for GPUBinaryThresholdImageFilter */
+itkGPUKernelClassMacro(GPUBinaryThresholdImageFilterKernel);
+
 /** GPUBinaryThresholdImageFilter class definition */
 template< class TInputImage, class TOutputImage >
 class ITK_EXPORT GPUBinaryThresholdImageFilter :
@@ -119,6 +122,10 @@ public:
 
   /** Type of DataObjects to use for scalar inputs */
   typedef SimpleDataObjectDecorator< InputPixelType > InputPixelObjectType;
+
+  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
+  itkGetOclSourceFromKernelMacro(GPUBinaryThresholdImageFilterKernel);
+
 protected:
   GPUBinaryThresholdImageFilter();
   virtual ~GPUBinaryThresholdImageFilter() {
@@ -204,6 +211,7 @@ private:
       OverrideThresholdFilterTypeMacro(double,double,2);
 
       OverrideThresholdFilterTypeMacro(unsigned char, unsigned char, 3);
+      OverrideThresholdFilterTypeMacro(unsigned short, unsigned short, 3);
       OverrideThresholdFilterTypeMacro(char, char, 3);
       OverrideThresholdFilterTypeMacro(float,float,3);
       OverrideThresholdFilterTypeMacro(int,int,3);

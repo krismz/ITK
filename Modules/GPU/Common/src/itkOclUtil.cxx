@@ -130,7 +130,7 @@ cl_device_id OclGetMaxFlopsDev(cl_context cxGPUContext)
 //
 // Print device name & info
 //
-void OclPrintDeviceName(cl_device_id device)
+void OclPrintDeviceInfo(cl_device_id device, bool verbose)
 {
   cl_int err;
 
@@ -146,6 +146,22 @@ void OclPrintDeviceName(cl_device_id device)
   size_t maxWorkgroupSize;
   err = clGetDeviceInfo(device,CL_DEVICE_MAX_WORK_GROUP_SIZE,sizeof(maxWorkgroupSize),&maxWorkgroupSize,NULL);
   std::cout << "Maximum Work Group Size : " << maxWorkgroupSize << std::endl;
+
+  if (verbose)
+  {
+    cl_uint mem_align;
+    err = clGetDeviceInfo(device, CL_DEVICE_MEM_BASE_ADDR_ALIGN, sizeof(mem_align), &mem_align, NULL);
+    std::cout << "Alignment in bits of the base address : " << mem_align << std::endl;
+
+    cl_uint min_align;
+    err = clGetDeviceInfo(device, CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE, sizeof(min_align), &min_align, NULL);
+    std::cout << "Smallest alignment in bytes for any data type : " << min_align << std::endl;
+
+    char device_extensions[1024];
+    err = clGetDeviceInfo(device, CL_DEVICE_EXTENSIONS, sizeof(device_extensions), &device_extensions, NULL);
+    printf("%s\n", device_extensions);
+
+  }
 }
 
 //
@@ -327,59 +343,109 @@ bool IsGPUAvailable()
   return true;
 }
 
-void GetTypenameInString( const std::type_info& intype, std::ostringstream& ret )
+std::string GetTypename(const std::type_info& intype)
 {
+  std::string typestr;
   if ( intype == typeid ( unsigned char ) ||
        intype == typeid ( itk::Vector< unsigned char, 2 > ) ||
        intype == typeid ( itk::Vector< unsigned char, 3 > ) )
     {
-    ret << "unsigned char\n";
+    typestr = "unsigned char";
     }
   else if ( intype == typeid ( char ) ||
             intype == typeid ( itk::Vector< char, 2 > ) ||
             intype == typeid ( itk::Vector< char, 3 > ) )
     {
-    ret << "char\n";
+    typestr = "char";
     }
   else if ( intype == typeid ( short ) ||
             intype == typeid ( itk::Vector< short, 2 > ) ||
             intype == typeid ( itk::Vector< short, 3 > ) )
     {
-    ret << "short\n";
+    typestr = "short";
     }
   else if ( intype == typeid ( int ) ||
             intype == typeid ( itk::Vector< int, 2 > ) ||
             intype == typeid ( itk::Vector< int, 3 > ) )
     {
-    ret << "int\n";
+    typestr = "int";
     }
   else if ( intype == typeid ( unsigned int ) ||
             intype == typeid ( itk::Vector< unsigned int, 2 > ) ||
             intype == typeid ( itk::Vector< unsigned int, 3 > ) )
     {
-    ret << "unsigned int\n";
+    typestr = "unsigned int";
+    }
+  else if ( intype == typeid ( long ) ||
+            intype == typeid ( itk::Vector< long, 2 > ) ||
+            intype == typeid ( itk::Vector< long, 3 > ) )
+    {
+    typestr = "long";
+    }
+  else if ( intype == typeid ( unsigned long ) ||
+            intype == typeid ( itk::Vector< unsigned long, 2 > ) ||
+            intype == typeid ( itk::Vector< unsigned long, 3 > ) )
+    {
+    typestr = "unsigned long";
+    }
+  else if ( intype == typeid ( long long) ||
+            intype == typeid ( itk::Vector< long long, 2 > ) ||
+            intype == typeid ( itk::Vector< long long, 3 > ) )
+    {
+    typestr = "long long";
     }
   else if ( intype == typeid ( float ) ||
             intype == typeid ( itk::Vector< float, 2 > ) ||
             intype == typeid ( itk::Vector< float, 3 > ) )
     {
-    ret << "float\n";
+    typestr = "float";
     }
   else if ( intype == typeid ( double ) ||
             intype == typeid ( itk::Vector< double, 2 > ) ||
             intype == typeid ( itk::Vector< double, 3 > ) )
     {
-    ret << "double\n";
-
-    // enable 64bit computation
-    ret << "#pragma OPENCL EXTENSION cl_khr_fp64 : enable\n";
-    ret << "#pragma OPENCL EXTENSION cl_amd_fp64 : enable\n";
+    typestr = "double";
     }
   else
     {
-    //std::cerr << "Pixeltype is not supported by GPUMeanImageFilter." <<
-    // std::endl;
-    itkGenericExceptionMacro("Pixeltype is not supported by the filter.");
+      itkGenericExceptionMacro("Unknown type: " << intype.name());
+    }
+  return typestr;
+}
+
+/** Get Typename in String if a valid type */
+bool GetValidTypename(const std::type_info& intype, const std::vector<std::string>& validtypes, std::string& retTypeName)
+{
+  std::string typestr = GetTypename(intype);
+  bool isValid = false;
+  std::vector<std::string>::const_iterator validPos;
+  validPos = std::find(validtypes.begin(), validtypes.end(), typestr);
+  if (validPos != validtypes.end())
+    {
+      isValid = true;
+      retTypeName = *validPos;
+    }
+
+  return isValid;
+}
+
+/** Get 64-bit pragma */
+std::string Get64BitPragma()
+{
+  std::ostringstream msg;
+  msg << "#pragma OPENCL EXTENSION cl_khr_fp64 : enable\n";
+  msg << "#pragma OPENCL EXTENSION cl_amd_fp64 : enable\n";
+  return msg.str();
+}
+
+void GetTypenameInString( const std::type_info& intype, std::ostringstream& ret )
+{
+  std::string typestr = GetTypename(intype);
+  ret << typestr << "\n";
+  if ( typestr == "double" )
+    {
+    std::string pragmastr = Get64BitPragma();
+    ret << pragmastr;
     }
 }
 

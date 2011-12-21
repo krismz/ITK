@@ -30,6 +30,10 @@ namespace itk
  *
  * \ingroup ITKGPUCommon
  * */
+
+/** Create a helper GPU Kernel class for GPUScalarAnisotropicDiffusionFunction */
+itkGPUKernelClassMacro(GPUScalarAnisotropicDiffusionFunctionKernel);
+
 template< class TImage >
 class ITK_EXPORT GPUScalarAnisotropicDiffusionFunction :
   public GPUAnisotropicDiffusionFunction< TImage >
@@ -54,6 +58,9 @@ public:
   typedef typename Superclass::RadiusType       RadiusType;
   typedef typename Superclass::NeighborhoodType NeighborhoodType;
   typedef typename Superclass::TimeStepType     TimeStepType;
+
+  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
+  itkGetOclSourceFromKernelMacro(GPUScalarAnisotropicDiffusionFunctionKernel);
 
   /** Compute average squared gradient of magnitude using the GPU */
   virtual void GPUCalculateAverageGradientMagnitudeSquared(TImage *);

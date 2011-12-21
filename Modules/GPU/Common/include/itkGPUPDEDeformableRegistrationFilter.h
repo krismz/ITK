@@ -71,6 +71,10 @@ namespace itk
  * \ingroup ITKPDEDeformableRegistration
  * \ingroup ITKGPUCommon
  */
+
+/** Create a helper GPU Kernel class for GPUPDEDeformableRegistrationFilter */
+itkGPUKernelClassMacro(GPUPDEDeformableRegistrationFilterKernel);
+
 template< class TFixedImage, class TMovingImage, class TDeformationField,
           class TParentImageFilter = PDEDeformableRegistrationFilter< TFixedImage, TMovingImage, TDeformationField >
           >
@@ -121,6 +125,9 @@ public:
   /** Inherit some enums and typedefs from the GPUSuperclass. */
   itkStaticConstMacro(ImageDimension, unsigned int,
                       GPUSuperclass::ImageDimension);
+
+  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
+itkGetOclSourceFromKernelMacro(GPUPDEDeformableRegistrationFilterKernel);
 
   /** Set the fixed image. */
   void SetFixedImage(const FixedImageType *ptr);

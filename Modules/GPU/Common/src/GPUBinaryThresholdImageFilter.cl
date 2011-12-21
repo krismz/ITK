@@ -16,9 +16,9 @@
  *
  *=========================================================================*/
 
-OutPixelType Functor(float lowerThreshold, float upperThreshold,
-                     OutPixelType insideValue, OutPixelType outsideValue,
-                     float currentValue)
+OutPixelType Functor(InArgType lowerThreshold, InArgType upperThreshold,
+                     OutArgType insideValue, OutArgType outsideValue,
+                     InPixelType currentValue)
 {
   if ( lowerThreshold <= currentValue && currentValue <= upperThreshold )
   {
@@ -28,8 +28,8 @@ OutPixelType Functor(float lowerThreshold, float upperThreshold,
 }
 
 #ifdef DIM_1
-__kernel void BinaryThresholdFilter(InPixelType lowerThreshold, InPixelType upperThreshold,
-                                    OutPixelType insideValue, OutPixelType outsideValue,
+__kernel void BinaryThresholdFilter(InArgType lowerThreshold, InArgType upperThreshold,
+                                    OutArgType insideValue, OutArgType outsideValue,
                                     __global const InPixelType* in, __global OutPixelType* out,
                                     int width)
 {
@@ -43,8 +43,8 @@ __kernel void BinaryThresholdFilter(InPixelType lowerThreshold, InPixelType uppe
 
 
 #ifdef DIM_2
-__kernel void BinaryThresholdFilter(InPixelType lowerThreshold, InPixelType upperThreshold,
-                                    OutPixelType insideValue, OutPixelType outsideValue,
+__kernel void BinaryThresholdFilter(InArgType lowerThreshold, InArgType upperThreshold,
+                                    OutArgType insideValue, OutArgType outsideValue,
                                     __global const InPixelType* in, __global OutPixelType* out,
                                     int width, int height)
 {
@@ -59,8 +59,8 @@ __kernel void BinaryThresholdFilter(InPixelType lowerThreshold, InPixelType uppe
 #endif
 
 #ifdef DIM_3
-__kernel void BinaryThresholdFilter(InPixelType lowerThreshold, InPixelType upperThreshold,
-                                    OutPixelType insideValue, OutPixelType outsideValue,
+__kernel void BinaryThresholdFilter(InArgType lowerThreshold, InArgType upperThreshold,
+                                    OutArgType insideValue, OutArgType outsideValue,
                                     __global const InPixelType* in, __global OutPixelType* out,
                                     int width, int height, int depth)
 {

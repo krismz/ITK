@@ -59,13 +59,12 @@ GPUDenseFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilt
 
   // assumes input and output pixel type is same
   defines << "#define PIXELDIM " << GetPixelDimension( typeid ( typename TOutputImage::PixelType ) ) << "\n";
+  std::cout << "Defines: " << defines.str() << std::endl;
 
-  std::string oclSrcPath = "./../OpenCL/GPUDenseFiniteDifferenceImageFilter.cl";
-
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  const char* GPUSource = GPUDenseFiniteDifferenceImageFilter::GetOclSource();
 
   // load and build program
-  this->m_GPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   // create kernel
   m_ApplyUpdateGPUKernelHandle = this->m_GPUKernelManager->CreateKernel("ApplyUpdate");

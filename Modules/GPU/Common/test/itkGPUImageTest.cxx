@@ -24,6 +24,7 @@
 #include "itkGPUImage.h"
 #include "itkGPUKernelManager.h"
 #include "itkGPUContextManager.h"
+#include "itkGPUImageOps.h"
 
 typedef itk::GPUImage<float, 2> ItkImage1f;
 
@@ -84,8 +85,9 @@ int itkGPUImageTest(int argc, char *argv[])
   // load program and compile
   //std::string oclSrcPath = itk_root_path;
   //oclSrcPath += "/Modules/GPU/Common/ImageOps.cl";
-  std::string oclSrcPath = "./OpenCL/ImageOps.cl";
-  kernelManager->LoadProgramFromFile( oclSrcPath.c_str(), "#define PIXELTYPE float\n" );
+
+  const char* GPUSource = itk::GPUImageOps::GetOclSource();
+  kernelManager->LoadProgramFromString(GPUSource, "#define PIXELTYPE float\n");
 
   //
   // create addition kernel

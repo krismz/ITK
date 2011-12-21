@@ -51,6 +51,10 @@ namespace itk
  *
  * \ingroup ITKGPUCommon
  */
+
+/** Create a helper GPU Kernel class for GPUGradientNDAnisotropicDiffusionFunction */
+itkGPUKernelClassMacro(GPUGradientNDAnisotropicDiffusionFunctionKernel);
+
 template< class TImage >
 class ITK_EXPORT GPUGradientNDAnisotropicDiffusionFunction :
   public GPUScalarAnisotropicDiffusionFunction< TImage >
@@ -82,6 +86,9 @@ public:
 
   /** Inherit some parameters from the superclass type. */
   itkStaticConstMacro(ImageDimension, unsigned int, Superclass::ImageDimension);
+
+  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
+  itkGetOclSourceFromKernelMacro(GPUGradientNDAnisotropicDiffusionFunctionKernel);
 
   /** Compute the equation value. */
   virtual void GPUComputeUpdate( const typename TImage::Pointer output, typename TImage::Pointer buffer,

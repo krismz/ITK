@@ -105,12 +105,12 @@ GPUNeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueTyp
   defines << "#define OPTYPE ";
   GetTypenameInString( typeid ( TOperatorValueType ), defines );
 
-  std::string oclSrcPath = "./../OpenCL/GPUNeighborhoodOperatorImageFilter.cl";
+  std::cout << "Defines: " << defines.str() << std::endl;
 
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  const char* GPUSource = GPUNeighborhoodOperatorImageFilter::GetOclSource();
 
   // load and build program
-  this->m_GPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   // create kernel
   m_NeighborhoodOperatorFilterGPUKernelHandle = this->m_GPUKernelManager->CreateKernel("NeighborOperatorFilter");

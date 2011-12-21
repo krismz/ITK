@@ -51,8 +51,8 @@ cl_device_id* OclGetAvailableDevices(cl_platform_id platform, cl_device_type dev
 /** Get the device that has the maximum FLOPS in the current context */
 cl_device_id OclGetMaxFlopsDev(cl_context cxGPUContext);
 
-/** Print device name */
-void OclPrintDeviceName(cl_device_id device);
+/** Print device name and info */
+void OclPrintDeviceInfo(cl_device_id device, bool verbose=false);
 
 /** Find the OpenCL platform that matches the "name" */
 cl_platform_id OclSelectPlatform(const char* name);
@@ -62,6 +62,15 @@ void OclCheckError(cl_int error, const char* filename="", int lineno=0, const ch
 
 /** Check if OpenCL-enabled GPU is present. */
 bool IsGPUAvailable();
+
+/** Get Typename */
+std::string GetTypename(const std::type_info& intype);
+
+/** Get Typename in String if a valid type */
+bool GetValidTypename(const std::type_info& intype, const std::vector<std::string>& validtypes, std::string& retTypeName);
+
+/** Get 64-bit pragma */
+std::string Get64BitPragma();
 
 /** Get Typename in String */
 void GetTypenameInString( const std::type_info& intype, std::ostringstream& ret );

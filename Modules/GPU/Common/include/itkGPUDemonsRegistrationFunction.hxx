@@ -87,13 +87,12 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDeformationField >
 
   defines << "#define OUTPIXELTYPE ";
   GetTypenameInString( typeid ( typename TDeformationField::PixelType::ValueType ), defines );
+  std::cout << "Defines: " << defines.str() << std::endl;
 
-  std::string oclSrcPath = "./../OpenCL/GPUDemonsRegistrationFunction.cl";
-
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  const char* GPUSource = GPUDemonsRegistrationFunction::GetOclSource();
 
   // load and build program
-  this->m_GPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   // create kernel
   m_ComputeUpdateGPUKernelHandle = this->m_GPUKernelManager->CreateKernel("ComputeUpdate");

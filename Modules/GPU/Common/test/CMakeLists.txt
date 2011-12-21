@@ -45,7 +45,7 @@ itk_add_test(NAME itkGPUMeanImageFilterTest
 itk_add_test(NAME itkGPUBinaryThresholdImageFilterTest
         COMMAND ITKGPUCommonTestDriver itkGPUBinaryThresholdImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
-        ${ITK_TEST_OUTPUT_DIR}/gpuBinaryThresholdImageFilterTest.png)
+        ${ITK_TEST_OUTPUT_DIR}/gpuBinaryThresholdImageFilterTest.mha)
 
 itk_add_test(NAME itkGPUNeighborhoodOperatorImageFilterTest
         COMMAND ITKGPUCommonTestDriver itkGPUNeighborhoodOperatorImageFilterTest

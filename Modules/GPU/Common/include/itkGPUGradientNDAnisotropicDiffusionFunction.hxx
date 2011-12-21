@@ -91,15 +91,27 @@ GPUGradientNDAnisotropicDiffusionFunction< TImage >
   defines << "#define DIM_" << TImage::ImageDimension << "\n";
   defines << "#define BLOCK_SIZE " << BLOCK_SIZE[TImage::ImageDimension-1] << "\n";
 
-  defines << "#define PIXELTYPE ";
-  GetTypenameInString( typeid ( typename TImage::PixelType ), defines );
+  std::string pixeltypename = GetTypename( typeid(typename TImage::PixelType) );
+  defines << "#define PIXELTYPE " << pixeltypename << "\n";
+  if (pixeltypename == "unsigned char")
+  {
+    // This is to work around a bug in the OpenCL compiler on Mac OS 10.6 and 10.7 with NVidia drivers
+    // where the compiler was not handling unsigned char arguments correctly.
+    // be sure to define the kernel arguments as ArgType in the kernel source
+    // Using unsigned short instead of unsigned char in the kernel definition
+    // is a known workaround to this problem.
+    defines << "#define ARGTYPE unsigned short\n";
+  }
+  else
+  {
+    defines << "#define ARGTYPE " << pixeltypename << "\n";
+  }
+  std::cout << "Defines: " << defines.str() << std::endl;
 
-  std::string oclSrcPath = "./../OpenCL/GPUGradientNDAnisotropicDiffusionFunction.cl";
-
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  const char* GPUSource = GPUGradientNDAnisotropicDiffusionFunction::GetOclSource();
 
   // load and build program
-  this->m_GPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   // create kernel
   this->m_ComputeUpdateGPUKernelHandle = this->m_GPUKernelManager->CreateKernel("ComputeUpdate");

@@ -133,6 +133,80 @@ bool GPUKernelManager::LoadProgramFromFile(const char* filename, const char* cPr
   return true;
 }
 
+bool GPUKernelManager::LoadProgramFromString(const char* cSource, const char* cPreamble)
+{
+  size_t szSourceLength;
+  size_t szPreambleLength;
+  size_t szFinalLength;
+
+  szSourceLength = strlen(cSource);
+  szPreambleLength = strlen(cPreamble);
+  szFinalLength = szSourceLength + szPreambleLength;
+
+  // allocate a buffer for the source code string and read it in
+  char* cSourceString = (char *)malloc(szFinalLength + 1);
+  if(szPreambleLength > 0) memcpy(cSourceString, cPreamble, szPreambleLength);
+
+  memcpy(cSourceString + szPreambleLength, cSource, szSourceLength);
+
+
+  cSourceString[szFinalLength] = '\0';
+
+  //
+  // Create OpenCL program from source strings
+  //
+  cl_int errid;
+  m_Program = clCreateProgramWithSource(
+      m_Manager->GetCurrentContext(), 1, (const char **)&cSourceString, &szFinalLength, &errid);
+  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  // KMZ when is it safe to free the source string?  Seems like the program still keeps a reference to it, so deleting here is dangerous?
+//   free(cSourceString);
+
+  if(errid != CL_SUCCESS)
+    {
+    itkWarningMacro("Cannot create GPU program");
+    return false;
+    }
+
+  // build program
+  errid = clBuildProgram(m_Program, 0, NULL, NULL, NULL, NULL);
+  if(errid != CL_SUCCESS)
+    {
+    //itkWarningMacro("OpenCL program build error");
+
+    // print out build error
+    size_t paramValueSize = 0;
+
+    // get error message size
+    clGetProgramBuildInfo(m_Program, m_Manager->GetDeviceId(0), CL_PROGRAM_BUILD_LOG, 0, NULL, &paramValueSize);
+
+    char *paramValue;
+    paramValue = (char*)malloc(paramValueSize);
+
+    // get error message
+    clGetProgramBuildInfo(m_Program, m_Manager->GetDeviceId(0), CL_PROGRAM_BUILD_LOG, paramValueSize, paramValue, NULL);
+
+    /*
+    std::ostringstream itkmsg;
+    itkmsg << "ERROR: In " __FILE__ ", line " << __LINE__ << "\n"
+           << this->GetNameOfClass() << " (" << this << "): "
+           << "OpenCL program build error:" << paramValue
+           << "\n\n";
+    ::itk::OutputWindowDisplayErrorText( itkmsg.str().c_str() );
+    */
+
+    std::cerr << paramValue << std::endl;
+
+    free( paramValue );
+
+    OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+
+    return false;
+    }
+
+  return true;
+}
+
 int GPUKernelManager::CreateKernel(const char* kernelName)
 {
   cl_int errid;
@@ -390,10 +464,10 @@ errid = clFlush(m_Manager->GetCommandQueue(m_CommandQueueId));
 OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
 std::cout << "Check point 2" << std::endl;
-
+*/
 errid = clFinish(m_Manager->GetCommandQueue(m_CommandQueueId));
 OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
-
+/*
 std::cout << "Wait for kernel execution ends" << std::endl;
 */
 

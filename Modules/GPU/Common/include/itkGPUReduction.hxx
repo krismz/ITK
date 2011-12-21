@@ -74,9 +74,9 @@ GPUReduction< TElement >
 template< class TElement >
 void
 GPUReduction< TElement >
-::GetNumBlocksAndThreads(int whichKernel, int n, int maxBlocks, int maxThreads, int &blocks, int &threads)
+::GetNumBlocksAndThreads(int whichKernelId, int n, int maxBlocks, int maxThreads, int &blocks, int &threads)
 {
-  if (whichKernel < 3)
+  if (whichKernelId < 3)
     {
     threads = (n < maxThreads) ? this->NextPow2(n) : maxThreads;
     blocks = (n + threads - 1) / threads;
@@ -87,7 +87,7 @@ GPUReduction< TElement >
     blocks = (n + (threads * 2 - 1) ) / (threads * 2);
     }
 
-  if (whichKernel == 6)
+  if (whichKernelId == 6)
     {
     if (maxBlocks < blocks)
       {
@@ -99,16 +99,15 @@ GPUReduction< TElement >
 template< class TElement >
 unsigned int
 GPUReduction< TElement >
-::GetReductionKernel(int whichKernel, int blockSize, int isPowOf2)
+::GetReductionKernelId(int whichKernelId, int blockSize, int isPowOf2)
 {
-  if ( whichKernel != 5 && whichKernel != 6 )
+  if ( whichKernelId != 5 && whichKernelId != 6 )
     {
-    itkExceptionMacro(<< "Reduction kernel undefined!");
+    itkExceptionMacro(<< "Reduction kernel id undefined!");
     return 0;
     }
 
   std::ostringstream defines;
-  std::string        oclSrcPath = "./../OpenCL/GPUReduction.cl";
 
   defines << "#define blockSize " << blockSize << std::endl;
   defines << "#define nIsPow2 " << isPowOf2 << std::endl;
@@ -116,13 +115,15 @@ GPUReduction< TElement >
   defines << "#define T ";
   GetTypenameInString( typeid ( TElement ), defines );
 
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  std::cout << "Defines: " << defines.str() << std::endl;
+
+  const char* GPUSource = GPUReduction::GetOclSource();
 
   // load and build program
-  this->m_GPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   std::ostringstream kernelName;
-  kernelName << "reduce" << whichKernel;
+  kernelName << "reduce" << whichKernelId;
   unsigned int handle = this->m_GPUKernelManager->CreateKernel(kernelName.str().c_str() );
 
   size_t wgSize;
@@ -217,20 +218,20 @@ GPUReduction< TElement >
   m_Size = size;
 
   // Create a testing kernel to decide block size
-  m_TestGPUKernelHandle = this->GetReductionKernel(6, 64, 1);
+  m_TestGPUKernelHandle = this->GetReductionKernelId(6, 64, 1);
   //m_GPUKernelManager->ReleaseKernel(kernelHandle);
 
   // number of threads per block
   int maxThreads = m_SmallBlock ? 64 : 128;
 
-  int whichKernel = 6;
+  int whichKernelId = 6;
   int maxBlocks = 64;
 
   int numBlocks = 0;
   int numThreads = 0;
 
-  this->GetNumBlocksAndThreads(whichKernel, size, maxBlocks, maxThreads, numBlocks, numThreads);
-  m_ReduceGPUKernelHandle = this->GetReductionKernel(whichKernel, numThreads, isPow2(size) );
+  this->GetNumBlocksAndThreads(whichKernelId, size, maxBlocks, maxThreads, numBlocks, numThreads);
+  m_ReduceGPUKernelHandle = this->GetReductionKernelId(whichKernelId, numThreads, isPow2(size) );
 
 }
 
@@ -244,7 +245,7 @@ GPUReduction< TElement >
   // number of threads per block
   int maxThreads = m_SmallBlock ? 64 : 128;
 
-  int  whichKernel = 6;
+  int  whichKernelId = 6;
   int  maxBlocks = 64;
   bool cpuFinalReduction = true;
   int  cpuFinalThreshold = 1;
@@ -254,7 +255,7 @@ GPUReduction< TElement >
   int numBlocks = 0;
   int numThreads = 0;
 
-  this->GetNumBlocksAndThreads(whichKernel, size, maxBlocks, maxThreads, numBlocks, numThreads);
+  this->GetNumBlocksAndThreads(whichKernelId, size, maxBlocks, maxThreads, numBlocks, numThreads);
 
   if (numBlocks == 1) cpuFinalThreshold = 1;
 
@@ -271,7 +272,7 @@ GPUReduction< TElement >
 
   m_GPUResult = 0;
   m_GPUResult = this->GPUReduce(size, numThreads, numBlocks, maxThreads, maxBlocks,
-                                whichKernel, cpuFinalReduction,
+                                whichKernelId, cpuFinalReduction,
                                 cpuFinalThreshold, &dTotalTime,
                                 m_GPUDataManager, odata);
 
@@ -291,7 +292,7 @@ GPUReduction< TElement >
               int  numBlocks,
               int  maxThreads,
               int  maxBlocks,
-              int  whichKernel,
+              int  whichKernelId,
               bool cpuFinalReduction,
               int  cpuFinalThreshold,
               double* dTotalTime,

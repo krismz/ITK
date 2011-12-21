@@ -144,6 +144,11 @@ int itkGPUBinaryThresholdImageFilterTest(int argc, char *argv[])
         double RMSError = sqrt( diff / (double)nPix );
         std::cout << "RMS Error : " << RMSError << std::endl;
         double RMSThreshold = 0;
+        writer->SetInput( GPUFilter->GetOutput() );
+
+        // execute pipeline filter and write output
+        writer->Update();
+
         if (RMSError > RMSThreshold)
         {
           std::cout << "RMS Error exceeds threshold (" << RMSThreshold << ")" << std::endl;

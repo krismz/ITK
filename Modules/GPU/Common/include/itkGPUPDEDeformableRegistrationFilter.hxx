@@ -72,12 +72,12 @@ GPUPDEDeformableRegistrationFilter< TFixedImage, TMovingImage, TDeformationField
   defines << "#define OUTPIXELTYPE ";
   GetTypenameInString( typeid ( typename TDeformationField::PixelType::ValueType ), defines );
 
-  std::string oclSrcPath = "./../OpenCL/GPUPDEDeformableRegistrationFilter.cl";
+  std::cout << "Defines: " << defines.str() << std::endl;
 
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  const char* GPUSource = GPUPDEDeformableRegistrationFilter::GetOclSource();
 
   // load and build program
-  this->m_GPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   // create kernel
   m_SmoothDeformationFieldGPUKernelHandle = this->m_GPUKernelManager->CreateKernel("SmoothDeformationField");

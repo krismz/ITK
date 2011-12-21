@@ -47,13 +47,12 @@ GPUScalarAnisotropicDiffusionFunction< TImage >
 
   defines << "#define PIXELTYPE ";
   GetTypenameInString( typeid ( typename TImage::PixelType ), defines );
+  std::cout << "Defines: " << defines.str() << std::endl;
 
-  std::string oclSrcPath = "./../OpenCL/GPUScalarAnisotropicDiffusionFunction.cl";
-
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  const char* GPUSource = GPUScalarAnisotropicDiffusionFunction::GetOclSource();
 
   // load and build program
-  this->m_AnisotropicDiffusionFunctionGPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_AnisotropicDiffusionFunctionGPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   // create kernel
   this->m_AverageGradientMagnitudeSquaredGPUKernelHandle =

@@ -19,75 +19,63 @@ GPUBinaryThresholdImageFilter< TInputImage, TOutputImage >
     itkExceptionMacro("GPUBinaryThresholdImageFilter supports 1/2/3D image.");
     }
 
+  std::vector<std::string> validTypes;
+  validTypes.push_back( "unsigned char" );
+  validTypes.push_back( "unsigned short" );
+  validTypes.push_back( "char" );
+  validTypes.push_back( "int" );
+  validTypes.push_back( "unsigned int" );
+  validTypes.push_back( "float" );
+  validTypes.push_back( "double" );
+
   defines << "#define DIM_" << TInputImage::ImageDimension << "\n";
-  defines << "#define InPixelType ";
 
-  if ( typeid ( typename TInputImage::PixelType ) == typeid ( unsigned char ) )
+  std::string validTypeName;
+  bool isValid = GetValidTypename(typeid( typename TInputImage::PixelType ), validTypes, validTypeName);
+  if (isValid)
     {
-    defines << "unsigned char\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( char ) )
-    {
-    defines << "char\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( int ) )
-    {
-    defines << "int\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( unsigned int ) )
-    {
-    defines << "unsigned int\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( float ) )
-    {
-    defines << "float\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( double ) )
-    {
-    defines << "double\n";
+      defines << "#define InPixelType " << validTypeName << "\n";
+      defines << "#define OutPixelType " << validTypeName << "\n";
+      if (validTypeName == "unsigned char")
+      {
+        // This is to work around a bug in the OpenCL compiler on Mac OS 10.6 and 10.7 with NVidia drivers
+        // where the compiler was not handling unsigned char arguments correctly.
+        // be sure to define the kernel arguments as InArgType and OutArgType in the kernel source
+        // Using unsigned short instead of unsigned char in the kernel definition
+        // is a known workaround to this problem.
+        defines << "#define InArgType unsigned short\n";
+        defines << "#define OutArgType unsigned short\n";
+      }
+      else
+      {
+        defines << "#define InArgType " << validTypeName << "\n";
+        defines << "#define OutArgType " << validTypeName << "\n";
+      }
     }
   else
     {
-    itkExceptionMacro("GPUBinaryThresholdImageFilter supports unsigned char, short, int and float images.");
+      std::ostringstream excpMsg;
+      excpMsg << "GPUBinaryThresholdImageFilter supports";
+      unsigned int sz = validTypes.size();
+      for (unsigned int ii = 0; ii < sz; ++ii)
+        {
+        if (ii < sz-1)
+          {
+            excpMsg << " " << validTypes[ii] << ",";
+          }
+        else
+          {
+            excpMsg << " and " << validTypes[ii] << " input and output images.";
+          }
+        }
+      itkExceptionMacro(<< excpMsg.str().c_str());
     }
 
-  defines << "#define OutPixelType ";
-  if ( typeid ( typename TInputImage::PixelType ) == typeid ( unsigned char ) )
-    {
-    defines << "unsigned char\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( char ) )
-    {
-    defines << "char\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( int ) )
-    {
-    defines << "int\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( unsigned int ) )
-    {
-    defines << "unsigned int\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( float ) )
-    {
-    defines << "float\n";
-    }
-  else if ( typeid ( typename TInputImage::PixelType ) == typeid ( double ) )
-    {
-    defines << "double\n";
-    }
-  else
-    {
-    itkExceptionMacro("GPUBinaryThresholdImageFilter supports unsigned char, short, int and float images.");
-    }
-
-  // OpenCL source path
-  std::string oclSrcPath = "./../OpenCL/GPUBinaryThresholdImageFilter.cl";
-
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  std::cout << "Defines: " << defines.str() << std::endl;
+  const char* GPUSource = GPUBinaryThresholdImageFilter::GetOclSource();
 
   // load and build program
-  this->m_GPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   // create kernel
   this->m_UnaryFunctorImageFilterGPUKernelHandle = this->m_GPUKernelManager->CreateKernel("BinaryThresholdFilter");

@@ -62,6 +62,8 @@ public:
 
   bool LoadProgramFromFile(const char* filename, const char* cPreamble="");
 
+  bool LoadProgramFromString(const char* cSource, const char* cPreamble="");
+
   int  CreateKernel(const char* kernelName);
 
   cl_int GetKernelWorkGroupInfo(int kernelIdx,

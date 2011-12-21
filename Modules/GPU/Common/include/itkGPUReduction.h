@@ -33,6 +33,10 @@ namespace itk
  *
  * \ingroup ITKGPUCommon
  */
+
+/** Create a helper GPU Kernel class for GPUReduction */
+  itkGPUKernelClassMacro(GPUReductionKernel);
+
 template< class TElement >
 class ITK_EXPORT GPUReduction :
   public Object
@@ -57,13 +61,16 @@ public:
   itkGetMacro(GPUResult, TElement);
   itkGetMacro(CPUResult, TElement);
 
+  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
+  itkGetOclSourceFromKernelMacro(GPUReductionKernel);
+
   unsigned int NextPow2( unsigned int x );
 
   bool isPow2(unsigned int x);
 
-  void GetNumBlocksAndThreads(int whichKernel, int n, int maxBlocks, int maxThreads, int &blocks, int &threads);
+  void GetNumBlocksAndThreads(int whichKernelId, int n, int maxBlocks, int maxThreads, int &blocks, int &threads);
 
-  unsigned int GetReductionKernel(int whichKernel, int blockSize, int isPowOf2);
+  unsigned int GetReductionKernelId(int whichKernelId, int blockSize, int isPowOf2);
 
   void AllocateGPUInputBuffer(unsigned int size);
 
@@ -82,7 +89,7 @@ public:
                        int  numBlocks,
                        int  maxThreads,
                        int  maxBlocks,
-                       int  whichKernel,
+                       int  whichKernelId,
                        bool cpuFinalReduction,
                        int  cpuFinalThreshold,
                        double* dTotalTime,

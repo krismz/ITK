@@ -46,6 +46,10 @@ namespace itk
  *
  * \ingroup ITKGPUCommon
  */
+
+/** Create a helper GPU Kernel class for GPUDenseFiniteDifferenceImageFilter */
+itkGPUKernelClassMacro(GPUDenseFiniteDifferenceImageFilterKernel);
+
 template< class TInputImage, class TOutputImage, class TParentImageFilter =
             DenseFiniteDifferenceImageFilter< TInputImage, TOutputImage > >
 class ITK_EXPORT GPUDenseFiniteDifferenceImageFilter :
@@ -91,6 +95,10 @@ public:
                    ( Concept::Convertible< typename TInputImage::PixelType, PixelType > ) );
   /** End concept checking */
 #endif
+
+  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
+  itkGetOclSourceFromKernelMacro(GPUDenseFiniteDifferenceImageFilterKernel);
+
 protected:
   GPUDenseFiniteDifferenceImageFilter();
   ~GPUDenseFiniteDifferenceImageFilter() {

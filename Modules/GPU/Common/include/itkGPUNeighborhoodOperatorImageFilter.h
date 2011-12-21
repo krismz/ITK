@@ -39,6 +39,10 @@ namespace itk
  * \author Won-Ki Jeong (wkjeong@seas.harvard.edu)
  * \ingroup ITKGPUCommon
  */
+
+/** Create a helper GPU Kernel class for GPUNeighborhoodOperatorImageFilter */
+itkGPUKernelClassMacro(GPUNeighborhoodOperatorImageFilterKernel);
+
 template< class TInputImage, class TOutputImage,
           class TOperatorValueType = typename TOutputImage::PixelType,
           class TParentImageFilter = NeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueType> >
@@ -95,6 +99,9 @@ public:
   /** Neighborhood types */
   typedef Neighborhood< OperatorValueType,
                         itkGetStaticConstMacro(ImageDimension) > OutputNeighborhoodType;
+
+  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
+  itkGetOclSourceFromKernelMacro(GPUNeighborhoodOperatorImageFilterKernel);
 
   /** Sets the operator that is used to filter the image. Note
    * that the operator is stored as an internal COPY (it

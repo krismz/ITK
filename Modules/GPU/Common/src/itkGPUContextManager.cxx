@@ -58,6 +58,7 @@ GPUContextManager::GPUContextManager()
 
   // create context
   m_Context = clCreateContext(0, m_NumberOfDevices, m_Devices, NULL, NULL, &errid);
+//   m_Context = clCreateContext(0, m_NumberOfDevices, m_Devices, clLogMessagesToStdoutAPPLE, NULL, &errid);
 
   OclCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
 
@@ -68,7 +69,7 @@ GPUContextManager::GPUContextManager()
     m_CommandQueue[i] = clCreateCommandQueue(m_Context, m_Devices[i], 0, &errid);
 
 // Debug
-//OclPrintDeviceName(m_Devices[i]);
+    OclPrintDeviceInfo(m_Devices[i], true);
     //
     OclCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
     }

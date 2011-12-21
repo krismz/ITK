@@ -36,16 +36,12 @@ GPUMeanImageFilter< TInputImage, TOutputImage >::GPUMeanImageFilter()
   defines << "#define DIM_" << TInputImage::ImageDimension << "\n";
   defines << "#define PIXELTYPE ";
   GetTypenameInString( typeid ( typename TInputImage::PixelType ), defines );
+  std::cout << "Defines: " << defines.str() << std::endl;
 
-  //std::string oclSrcPath = std::string ( itk_root_path ) +
-  // "/Code/GPU/GPUMeanImageFilter.cl";
-
-  std::string oclSrcPath = "./../OpenCL/GPUMeanImageFilter.cl";
-
-  std::cout << "Defines: " << defines.str() << "Source code path: " << oclSrcPath << std::endl;
+  const char* GPUSource = GPUMeanImageFilter::GetOclSource();
 
   // load and build program
-  this->m_GPUKernelManager->LoadProgramFromFile( oclSrcPath.c_str(), defines.str().c_str() );
+  this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
 
   // create kernel
   m_MeanFilterGPUKernelHandle = this->m_GPUKernelManager->CreateKernel("MeanFilter");

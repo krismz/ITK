@@ -34,6 +34,10 @@ namespace itk
  *
  * \ingroup ITKGPUCommon
  */
+
+/** Create a helper GPU Kernel class for GPUMeanImageFilter */
+itkGPUKernelClassMacro(GPUMeanImageFilterKernel);
+
 template< class TInputImage, class TOutputImage >
 class ITK_EXPORT GPUMeanImageFilter : //public GPUImageToImageFilter<
                                       // TInputImage, TOutputImage,
@@ -69,6 +73,10 @@ public:
                       TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
+
+  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
+  itkGetOclSourceFromKernelMacro(GPUMeanImageFilterKernel);
+
 protected:
   GPUMeanImageFilter();
   ~GPUMeanImageFilter();
