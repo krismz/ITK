@@ -36,13 +36,14 @@ GPUBinaryThresholdImageFilter< TInputImage, TOutputImage >
     {
       defines << "#define InPixelType " << validTypeName << "\n";
       defines << "#define OutPixelType " << validTypeName << "\n";
+#ifdef __APPLE__
+      // This is to work around a bug in the OpenCL compiler on Mac OS 10.6 and 10.7 with NVidia drivers
+      // where the compiler was not handling unsigned char arguments correctly.
+      // be sure to define the kernel arguments as InArgType and OutArgType in the kernel source
+      // Using unsigned short instead of unsigned char in the kernel definition
+      // is a known workaround to this problem.
       if (validTypeName == "unsigned char")
       {
-        // This is to work around a bug in the OpenCL compiler on Mac OS 10.6 and 10.7 with NVidia drivers
-        // where the compiler was not handling unsigned char arguments correctly.
-        // be sure to define the kernel arguments as InArgType and OutArgType in the kernel source
-        // Using unsigned short instead of unsigned char in the kernel definition
-        // is a known workaround to this problem.
         defines << "#define InArgType unsigned short\n";
         defines << "#define OutArgType unsigned short\n";
       }
@@ -51,6 +52,10 @@ GPUBinaryThresholdImageFilter< TInputImage, TOutputImage >
         defines << "#define InArgType " << validTypeName << "\n";
         defines << "#define OutArgType " << validTypeName << "\n";
       }
+#else
+      defines << "#define InArgType " << validTypeName << "\n";
+      defines << "#define OutArgType " << validTypeName << "\n";
+#endif
     }
   else
     {

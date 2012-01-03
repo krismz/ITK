@@ -18,7 +18,7 @@
 #include "itkOclUtil.h"
 #include <assert.h>
 #include <iostream>
-
+#include <algorithm>
 //
 // Get the devices that are available.
 //
