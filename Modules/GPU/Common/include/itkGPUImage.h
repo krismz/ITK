@@ -175,6 +175,8 @@ public:
 
   /** Graft the data and information from one GPUImage to another. */
   virtual void Graft(const DataObject *data);
+  /** Whenever the image has been modified, set the GPU Buffer to dirty */
+  virtual void Modified() const;
 
 protected:
   GPUImage();

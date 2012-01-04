@@ -71,11 +71,11 @@ public:
 
   void SetGPUDirtyFlag( bool isDirty );
 
-  /** Make CPU up-to-date and mark CPU as dirty.
+  /** Make GPU up-to-date and mark CPU as dirty.
    * Call this function when you want to modify CPU data */
   void SetCPUBufferDirty();
 
-  /** Make GPU up-to-date and mark GPU as dirty.
+  /** Make CPU up-to-date and mark GPU as dirty.
    * Call this function when you want to modify GPU data */
   void SetGPUBufferDirty();
 

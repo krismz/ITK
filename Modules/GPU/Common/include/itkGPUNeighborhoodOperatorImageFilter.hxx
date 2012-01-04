@@ -150,7 +150,6 @@ GPUNeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueTyp
 
   for(iit.GoToBegin(); !iit.IsAtEnd(); ++iit, ++nit)
     {
-    //std::cout << "Coeff : " << *nit << std::endl;
     iit.Set( static_cast< typename NeighborhoodGPUBufferType::PixelType >( *nit ) );
     }
 
