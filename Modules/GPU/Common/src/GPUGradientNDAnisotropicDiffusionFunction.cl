@@ -521,36 +521,30 @@ __kernel void ComputeUpdate(__global const INPIXELTYPE *in, __global BUFPIXELTYP
       dx_f = (sm[lix+1][liy][liz] - sm[lix][liy][liz])*scalex;
       dx_b = (sm[lix][liy][liz] - sm[lix-1][liy][liz])*scalex;
 
-      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[1] + (sm[lix+1][liy+1][liz] - sm[lix+1][liy-1][liz])*0.5f*scaley, 2))) / K );
-      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[1] + (sm[lix-1][liy+1][liz] - sm[lix-1][liy-1][liz])*0.5f*scaley, 2))) / K );
+      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[1] + (sm[lix+1][liy+1][liz] - sm[lix+1][liy-1][liz])*0.5f*scaley, 2))
+                            + 0.25f*(pown(dx[2] + (sm[lix+1][liy][liz+1] - sm[lix+1][liy][liz-1])*0.5f*scalez, 2))) / K );
+      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[1] + (sm[lix-1][liy+1][liz] - sm[lix-1][liy-1][liz])*0.5f*scaley, 2))
+                            + 0.25f*(pown(dx[2] + (sm[lix-1][liy][liz+1] - sm[lix-1][liy][liz-1])*0.5f*scalez, 2))) / K );
       delta += (Cx*dx_f - Cxd*dx_b);
 
-      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[2] + (sm[lix+1][liy][liz+1] - sm[lix+1][liy][liz-1])*0.5f*scalez, 2))) / K );
-      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[2] + (sm[lix-1][liy][liz+1] - sm[lix-1][liy][liz-1])*0.5f*scalez, 2))) / K );
-      delta += (Cx*dx_f - Cxd*dx_b);
-
-      // alogn y
+      // along y
       dx_f = (sm[lix][liy+1][liz] - sm[lix][liy][liz])*scaley;
       dx_b = (sm[lix][liy][liz] - sm[lix][liy-1][liz])*scaley;
 
-      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[0] + (sm[lix+1][liy+1][liz] - sm[lix-1][liy+1][liz])*0.5f*scalex, 2))) / K );
-      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[0] + (sm[lix+1][liy-1][liz] - sm[lix-1][liy-1][liz])*0.5f*scalex, 2))) / K );
-      delta += (Cx*dx_f - Cxd*dx_b);
-
-      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[2] + (sm[lix][liy+1][liz+1] - sm[lix][liy+1][liz-1])*0.5f*scalez, 2))) / K );
-      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[2] + (sm[lix][liy-1][liz+1] - sm[lix][liy-1][liz-1])*0.5f*scalez, 2))) / K );
+      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[0] + (sm[lix+1][liy+1][liz] - sm[lix-1][liy+1][liz])*0.5f*scalex, 2))
+                            + 0.25f*(pown(dx[2] + (sm[lix][liy+1][liz+1] - sm[lix][liy+1][liz-1])*0.5f*scalez, 2))) / K );
+      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[0] + (sm[lix+1][liy-1][liz] - sm[lix-1][liy-1][liz])*0.5f*scalex, 2))
+                            + 0.25f*(pown(dx[2] + (sm[lix][liy-1][liz+1] - sm[lix][liy-1][liz-1])*0.5f*scalez, 2))) / K );
       delta += (Cx*dx_f - Cxd*dx_b);
 
       // along z
       dx_f = (sm[lix][liy][liz+1] - sm[lix][liy][liz])*scalez;
       dx_b = (sm[lix][liy][liz] - sm[lix][liy][liz-1])*scalez;
 
-      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[0] + (sm[lix+1][liy][liz+1] - sm[lix-1][liy][liz+1])*0.5f*scalex, 2))) / K );
-      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[0] + (sm[lix+1][liy][liz-1] - sm[lix-1][liy][liz-1])*0.5f*scalex, 2))) / K );
-      delta += (Cx*dx_f - Cxd*dx_b);
-
-      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[1] + (sm[lix][liy+1][liz+1] - sm[lix][liy-1][liz+1])*0.5f*scaley, 2))) / K );
-      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[1] + (sm[lix][liy+1][liz-1] - sm[lix][liy-1][liz-1])*0.5f*scaley, 2))) / K );
+      Cx  = exp( (dx_f*dx_f + 0.25f*(pown(dx[0] + (sm[lix+1][liy][liz+1] - sm[lix-1][liy][liz+1])*0.5f*scalex, 2))
+                            + 0.25f*(pown(dx[1] + (sm[lix][liy+1][liz+1] - sm[lix][liy-1][liz+1])*0.5f*scaley, 2))) / K );
+      Cxd = exp( (dx_b*dx_b + 0.25f*(pown(dx[0] + (sm[lix+1][liy][liz-1] - sm[lix-1][liy][liz-1])*0.5f*scalex, 2))
+                            + 0.25f*(pown(dx[1] + (sm[lix][liy+1][liz-1] - sm[lix][liy-1][liz-1])*0.5f*scaley, 2))) / K );
       delta += (Cx*dx_f - Cxd*dx_b);
     }
 

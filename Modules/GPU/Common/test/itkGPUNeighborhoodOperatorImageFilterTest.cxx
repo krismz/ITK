@@ -80,7 +80,7 @@ int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
     writer->SetFileName( argv[2] );
   }
 
-  typedef itk::NumericTraits< OutputPixelType >::RealType    RealOutputPixelType;
+  typedef OutputPixelType    RealOutputPixelType;
   typedef itk::Image< OutputPixelType, ImageDimension >      RealOutputImageType;
   typedef itk::NumericTraits<RealOutputPixelType>::ValueType RealOutputPixelValueType;
 
@@ -156,7 +156,18 @@ int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
       {
         double RMSError = sqrt( diff / (double)nPix );
         std::cout << "RMS Error : " << RMSError << std::endl;
-        double RMSThreshold = 0;
+        // the CPU filter operator has type double
+        // but the double precision is not well-supported on most GPUs
+        // and by most drivers at this time.  Therefore, the GPU filter
+        // operator has type float
+        // relax the RMS threshold here to allow for errors due to
+        // differences in precision
+        double RMSThreshold = 1.1e-5;
+        if (vnl_math_isnan(RMSError))
+        {
+          std::cout << "RMS Error is NaN! nPix: " << nPix << std::endl;
+          return EXIT_FAILURE;
+        }
         if (RMSError > RMSThreshold)
         {
           std::cout << "RMS Error exceeds threshold (" << RMSThreshold << ")" << std::endl;

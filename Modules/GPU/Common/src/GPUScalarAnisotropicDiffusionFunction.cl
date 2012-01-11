@@ -209,11 +209,14 @@ __kernel void AverageGradientMagnitudeSquared(__global const INPIXELTYPE *in, __
   //
 
   // Center
-  if(gix < width && giy < height && giz < depth)
+  bool isValid = true;
+  if (gix >= width) isValid = false;
+  if (giy >= height) isValid = false;
+  if (giz >= depth) isValid = false;
+
+  if (isValid)
   {
     sm[lix][liy][liz] = in[gidx];
-//   }
-//   else sm[lix][liy][liz] = 0;
 
     // 6 top/bottom/left/right/up/down neighbor planes
     if(lix == 0)
@@ -269,15 +272,15 @@ __kernel void AverageGradientMagnitudeSquared(__global const INPIXELTYPE *in, __
 
     df = (lix == BLOCK_SIZE-1 || gix == width-1) ? yz_r[liy][liz] : sm[lix+1][liy][liz];
     db = (lix == 0) ? yz_l[liy][liz] : sm[lix-1][liy][liz];
-    dx[0] = (df - db)*0.5f*scalex;
+    dx[0] = (df - db)*-0.5f*scalex;
 
     df = (liy == BLOCK_SIZE-1 || giy == height-1) ? xz_r[lix][liz] : sm[lix][liy+1][liz];
     db = (liy == 0) ? xz_l[lix][liz] : sm[lix][liy-1][liz];
-    dx[1] = (df - db)*0.5f*scaley;
+    dx[1] = (df - db)*-0.5f*scaley;
 
     df = (liz == BLOCK_SIZE-1 || giz == depth-1) ? xy_r[lix][liy] : sm[lix][liy][liz+1];
     db = (liz == 0) ? xy_l[lix][liy] : sm[lix][liy][liz-1];
-    dx[2] = (df - db)*0.5f*scalez;
+    dx[2] = (df - db)*-0.5f*scalez;
 
     val = dx[0]*dx[0] + dx[1]*dx[1] * dx[2]*dx[2];
 

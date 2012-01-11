@@ -53,8 +53,9 @@ public:
   itkTypeMacro(GPUImageToImageFilter, TParentImageFilter);
 
   /** Superclass typedefs. */
-  typedef typename Superclass::OutputImageRegionType OutputImageRegionType;
-  typedef typename Superclass::OutputImagePixelType  OutputImagePixelType;
+  typedef typename Superclass::DataObjectIdentifierType DataObjectIdentifierType;
+  typedef typename Superclass::OutputImageRegionType    OutputImageRegionType;
+  typedef typename Superclass::OutputImagePixelType     OutputImagePixelType;
 
   /** Some convenient typedefs. */
   typedef TInputImage                           InputImageType;
@@ -75,6 +76,8 @@ public:
   void GenerateData();
 
   virtual void GraftOutput(DataObject *output);
+
+  virtual void GraftOutput(const DataObjectIdentifierType & key, DataObject *output);
 
 protected:
   GPUImageToImageFilter();

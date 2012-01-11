@@ -153,11 +153,8 @@ GPUNeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueTyp
     iit.Set( static_cast< typename NeighborhoodGPUBufferType::PixelType >( *nit ) );
     }
 
-  /** Mark GPU dirty (by marking CPU buffer modified) */
-  m_NeighborhoodGPUBuffer->Modified();
-
-  /** Explicit synchronization (CPU->GPU data copy) */
-  m_NeighborhoodGPUBuffer->UpdateBuffers();
+  /** Mark GPU dirty */
+  m_NeighborhoodGPUBuffer->GetGPUDataManager()->SetGPUBufferDirty();
 }
 
 template< class TInputImage, class TOutputImage, class TOperatorValueType, class TParentImageFilter >

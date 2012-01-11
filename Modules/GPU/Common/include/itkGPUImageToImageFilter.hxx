@@ -70,6 +70,16 @@ GPUImageToImageFilter< TInputImage, TOutputImage, TParentImageFilter >::GraftOut
   otPtr->Graft( output );
 }
 
+template< class TInputImage, class TOutputImage, class TParentImageFilter >
+void
+GPUImageToImageFilter< TInputImage, TOutputImage, TParentImageFilter >::GraftOutput(const DataObjectIdentifierType & key, DataObject *output)
+{
+  typedef typename itk::GPUTraits< TOutputImage >::Type GPUOutputImage;
+  typename GPUOutputImage::Pointer otPtr = dynamic_cast< GPUOutputImage * >( this->ProcessObject::GetOutput(key) );
+
+  otPtr->Graft( output );
+}
+
 } // end namespace itk
 
 #endif

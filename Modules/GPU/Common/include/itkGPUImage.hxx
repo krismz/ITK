@@ -79,7 +79,7 @@ template <class TPixel, unsigned int VImageDimension>
 void GPUImage< TPixel, VImageDimension >::Modified() const
 {
   Superclass::Modified();
-  m_DataManager->SetGPUBufferDirty();
+  //m_DataManager->SetGPUBufferDirty();
 }
 
 template <class TPixel, unsigned int VImageDimension>

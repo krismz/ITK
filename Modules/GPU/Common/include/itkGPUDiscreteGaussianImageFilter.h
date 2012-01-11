@@ -81,7 +81,7 @@ public:
   typedef typename NumericTraits<InputPixelType>::ValueType  InputPixelValueType;
   typedef typename NumericTraits<OutputPixelType>::ValueType OutputPixelValueType;
 
-  typedef typename NumericTraits< OutputPixelType >::RealType
+  typedef OutputPixelType
                                                                          RealOutputPixelType;
   typedef GPUImage< OutputPixelType,
                     ImageDimension >                                     RealOutputImageType;
