@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUScalarAnisotropicDiffusionFunction_txx
-#define __itkGPUScalarAnisotropicDiffusionFunction_txx
+#ifndef __itkGPUScalarAnisotropicDiffusionFunction_hxx
+#define __itkGPUScalarAnisotropicDiffusionFunction_hxx
 
 #include "itkConstNeighborhoodIterator.h"
 #include "itkNeighborhoodInnerProduct.h"
@@ -43,13 +43,13 @@ GPUScalarAnisotropicDiffusionFunction< TImage >
     }
 
   defines << "#define DIM_" << ImageDimension << "\n";
-  defines << "#define BLOCK_SIZE " << OclGetLocalBlockSize(ImageDimension) << "\n";
+  defines << "#define BLOCK_SIZE " << OpenCLGetLocalBlockSize(ImageDimension) << "\n";
 
   defines << "#define PIXELTYPE ";
   GetTypenameInString( typeid ( typename TImage::PixelType ), defines );
   std::cout << "Defines: " << defines.str() << std::endl;
 
-  const char* GPUSource = GPUScalarAnisotropicDiffusionFunction::GetOclSource();
+  const char* GPUSource = GPUScalarAnisotropicDiffusionFunction::GetOpenCLSource();
 
   // load and build program
   this->m_AnisotropicDiffusionFunctionGPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
@@ -76,7 +76,7 @@ GPUScalarAnisotropicDiffusionFunction< TImage >
   int ImageDim = (int)TImage::ImageDimension;
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
+  localSize[0] = localSize[1] = localSize[2] = OpenCLGetLocalBlockSize(ImageDim);
 
   unsigned int numPixel = 1;
   unsigned int bufferSize = 1;

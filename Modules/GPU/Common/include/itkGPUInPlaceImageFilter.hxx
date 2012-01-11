@@ -1,5 +1,5 @@
-#ifndef __itkGPUInPlaceImageFilter_txx
-#define __itkGPUInPlaceImageFilter_txx
+#ifndef __itkGPUInPlaceImageFilter_hxx
+#define __itkGPUInPlaceImageFilter_hxx
 
 #include "itkGPUInPlaceImageFilter.h"
 

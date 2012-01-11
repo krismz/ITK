@@ -21,7 +21,7 @@
 #include "itkObject.h"
 #include "itkGPUDataManager.h"
 #include "itkGPUKernelManager.h"
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 
 namespace itk
 {
@@ -61,8 +61,8 @@ public:
   itkGetMacro(GPUResult, TElement);
   itkGetMacro(CPUResult, TElement);
 
-  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
-  itkGetOclSourceFromKernelMacro(GPUReductionKernel);
+  /** Get OpenCL Kernel source as a string, creates a GetOpenCLSource method */
+  itkGetOpenCLSourceFromKernelMacro(GPUReductionKernel);
 
   unsigned int NextPow2( unsigned int x );
 

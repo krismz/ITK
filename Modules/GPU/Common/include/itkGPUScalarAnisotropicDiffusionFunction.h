@@ -59,8 +59,8 @@ public:
   typedef typename Superclass::NeighborhoodType NeighborhoodType;
   typedef typename Superclass::TimeStepType     TimeStepType;
 
-  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
-  itkGetOclSourceFromKernelMacro(GPUScalarAnisotropicDiffusionFunctionKernel);
+  /** Get OpenCL Kernel source as a string, creates a GetOpenCLSource method */
+  itkGetOpenCLSourceFromKernelMacro(GPUScalarAnisotropicDiffusionFunctionKernel);
 
   /** Compute average squared gradient of magnitude using the GPU */
   virtual void GPUCalculateAverageGradientMagnitudeSquared(TImage *);

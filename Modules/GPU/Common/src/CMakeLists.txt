@@ -3,7 +3,7 @@ if (ITK_USE_GPU)
     itkGPUContextManager.cxx
     itkGPUDataManager.cxx
     itkGPUKernelManager.cxx
-    itkOclUtil.cxx
+    itkOpenCLUtil.cxx
  )
 
  macro(sourcefile_to_string SOURCE_FILE RESULT_CMAKE_VAR)
@@ -27,7 +27,7 @@ if (ITK_USE_GPU)
     set(${GPUFILTER_KERNELNAME}_KernelString
         "${${GPUFILTER_KERNELNAME}_KernelString}{\n\n")
     set(${GPUFILTER_KERNELNAME}_KernelString
-        "${${GPUFILTER_KERNELNAME}_KernelString}const char* ${GPUFILTER_KERNELNAME}::GetOclSource()\n")
+        "${${GPUFILTER_KERNELNAME}_KernelString}const char* ${GPUFILTER_KERNELNAME}::GetOpenCLSource()\n")
     set(${GPUFILTER_KERNELNAME}_KernelString
         "${${GPUFILTER_KERNELNAME}_KernelString}{\n")
     set(${GPUFILTER_KERNELNAME}_KernelString

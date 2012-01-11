@@ -26,7 +26,7 @@
 #include "itkTimeProbe.h"
 #include "itkImageRegionIterator.h"
 
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 #include "itkGPUImage.h"
 #include "itkGPUKernelManager.h"
 #include "itkGPUContextManager.h"

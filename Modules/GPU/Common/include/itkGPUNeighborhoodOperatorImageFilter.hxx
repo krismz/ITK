@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUNeighborhoodOperatorImageFilter_txx
-#define __itkGPUNeighborhoodOperatorImageFilter_txx
+#ifndef __itkGPUNeighborhoodOperatorImageFilter_hxx
+#define __itkGPUNeighborhoodOperatorImageFilter_hxx
 
 #include "itkNeighborhoodAlgorithm.h"
 #include "itkNeighborhoodInnerProduct.h"
@@ -107,7 +107,7 @@ GPUNeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueTyp
 
   std::cout << "Defines: " << defines.str() << std::endl;
 
-  const char* GPUSource = GPUNeighborhoodOperatorImageFilter::GetOclSource();
+  const char* GPUSource = GPUNeighborhoodOperatorImageFilter::GetOpenCLSource();
 
   // load and build program
   this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
@@ -187,7 +187,7 @@ GPUNeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueTyp
     }
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
+  localSize[0] = localSize[1] = localSize[2] = OpenCLGetLocalBlockSize(ImageDim);
   for(int i=0; i<ImageDim; i++)
     {
     globalSize[i] = localSize[i]*(unsigned int)ceil( (float)outSize[i]/(float)localSize[i]); //

@@ -18,7 +18,7 @@
 #ifndef __itkGPUDemonsRegistrationFilter_h
 #define __itkGPUDemonsRegistrationFilter_h
 
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 #include "itkDemonsRegistrationFilter.h"
 #include "itkGPUPDEDeformableRegistrationFilter.h"
 #include "itkGPUDemonsRegistrationFunction.h"

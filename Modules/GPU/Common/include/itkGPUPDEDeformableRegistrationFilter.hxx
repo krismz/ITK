@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUPDEDeformableRegistrationFilter_txx
-#define __itkGPUPDEDeformableRegistrationFilter_txx
+#ifndef __itkGPUPDEDeformableRegistrationFilter_hxx
+#define __itkGPUPDEDeformableRegistrationFilter_hxx
 
 #include "itkGPUPDEDeformableRegistrationFilter.h"
 
@@ -74,7 +74,7 @@ GPUPDEDeformableRegistrationFilter< TFixedImage, TMovingImage, TDeformationField
 
   std::cout << "Defines: " << defines.str() << std::endl;
 
-  const char* GPUSource = GPUPDEDeformableRegistrationFilter::GetOclSource();
+  const char* GPUSource = GPUPDEDeformableRegistrationFilter::GetOpenCLSource();
 
   // load and build program
   this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
@@ -450,7 +450,7 @@ GPUPDEDeformableRegistrationFilter< TFixedImage, TMovingImage, TDeformationField
     }
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
+  localSize[0] = localSize[1] = localSize[2] = OpenCLGetLocalBlockSize(ImageDim);
   for(int i=0; i<ImageDim; i++)
     {
     globalSize[i] = localSize[i]*(unsigned int)ceil( (float)outSize[i]/(float)localSize[i]); //

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUDemonsRegistrationFunction_txx
-#define __itkGPUDemonsRegistrationFunction_txx
+#ifndef __itkGPUDemonsRegistrationFunction_hxx
+#define __itkGPUDemonsRegistrationFunction_hxx
 
 #include "itkGPUDemonsRegistrationFunction.h"
 #include "itkMacro.h"
@@ -89,7 +89,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDeformationField >
   GetTypenameInString( typeid ( typename TDeformationField::PixelType::ValueType ), defines );
   std::cout << "Defines: " << defines.str() << std::endl;
 
-  const char* GPUSource = GPUDemonsRegistrationFunction::GetOclSource();
+  const char* GPUSource = GPUDemonsRegistrationFunction::GetOpenCLSource();
 
   // load and build program
   this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
@@ -241,7 +241,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDeformationField >
     }
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
+  localSize[0] = localSize[1] = localSize[2] = OpenCLGetLocalBlockSize(ImageDim);
   for(int i=0; i<ImageDim; i++)
     {
     globalSize[i] = localSize[i]*(unsigned int)ceil( (float)outSize[i]/(float)localSize[i]); //

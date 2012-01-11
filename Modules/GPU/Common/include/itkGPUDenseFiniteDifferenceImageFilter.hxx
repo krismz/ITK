@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUDenseFiniteDifferenceImageFilter_txx
-#define __itkGPUDenseFiniteDifferenceImageFilter_txx
+#ifndef __itkGPUDenseFiniteDifferenceImageFilter_hxx
+#define __itkGPUDenseFiniteDifferenceImageFilter_hxx
 
 #include "itkGPUDenseFiniteDifferenceImageFilter.h"
 
@@ -24,7 +24,7 @@
 #include "itkImageRegionIterator.h"
 #include "itkNumericTraits.h"
 #include "itkNeighborhoodAlgorithm.h"
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 
 namespace itk
 {
@@ -61,7 +61,7 @@ GPUDenseFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilt
   defines << "#define PIXELDIM " << GetPixelDimension( typeid ( typename TOutputImage::PixelType ) ) << "\n";
   std::cout << "Defines: " << defines.str() << std::endl;
 
-  const char* GPUSource = GPUDenseFiniteDifferenceImageFilter::GetOclSource();
+  const char* GPUSource = GPUDenseFiniteDifferenceImageFilter::GetOpenCLSource();
 
   // load and build program
   this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
@@ -126,7 +126,7 @@ GPUDenseFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilt
     }
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
+  localSize[0] = localSize[1] = localSize[2] = OpenCLGetLocalBlockSize(ImageDim);
   for(int i=0; i<ImageDim; i++)
     {
     globalSize[i] = localSize[i]*(unsigned int)ceil( (float)outSize[i]/(float)localSize[i]); //

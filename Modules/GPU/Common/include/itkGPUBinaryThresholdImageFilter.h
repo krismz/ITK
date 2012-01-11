@@ -18,7 +18,7 @@
 #ifndef __itkGPUBinaryThresholdImageFilter_h
 #define __itkGPUBinaryThresholdImageFilter_h
 
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 #include "itkGPUFunctorBase.h"
 #include "itkGPUKernelManager.h"
 #include "itkBinaryThresholdImageFilter.h"
@@ -123,8 +123,8 @@ public:
   /** Type of DataObjects to use for scalar inputs */
   typedef SimpleDataObjectDecorator< InputPixelType > InputPixelObjectType;
 
-  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
-  itkGetOclSourceFromKernelMacro(GPUBinaryThresholdImageFilterKernel);
+  /** Get OpenCL Kernel source as a string, creates a GetOpenCLSource method */
+  itkGetOpenCLSourceFromKernelMacro(GPUBinaryThresholdImageFilterKernel);
 
 protected:
   GPUBinaryThresholdImageFilter();

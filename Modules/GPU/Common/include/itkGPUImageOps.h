@@ -39,8 +39,8 @@ public:
   /** Standard class typedefs. */
   typedef GPUImageOps Self;
 
-  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
-  itkGetOclSourceFromKernelMacro(GPUImageOpsKernel);
+  /** Get OpenCL Kernel source as a string, creates a GetOpenCLSource method */
+  itkGetOpenCLSourceFromKernelMacro(GPUImageOpsKernel);
 
 private:
   GPUImageOps();

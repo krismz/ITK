@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUDemonsRegistrationFilter_txx
-#define __itkGPUDemonsRegistrationFilter_txx
+#ifndef __itkGPUDemonsRegistrationFilter_hxx
+#define __itkGPUDemonsRegistrationFilter_hxx
 #include "itkGPUDemonsRegistrationFilter.h"
 
 namespace itk

@@ -22,7 +22,7 @@
 #include "itkGPUBoxImageFilter.h"
 #include "itkVersion.h"
 #include "itkObjectFactoryBase.h"
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 
 namespace itk
 {
@@ -74,8 +74,8 @@ public:
   itkStaticConstMacro(OutputImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
 
-  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
-  itkGetOclSourceFromKernelMacro(GPUMeanImageFilterKernel);
+  /** Get OpenCL Kernel source as a string, creates a GetOpenCLSource method */
+  itkGetOpenCLSourceFromKernelMacro(GPUMeanImageFilterKernel);
 
 protected:
   GPUMeanImageFilter();

@@ -495,7 +495,7 @@ namespace itk
 class ITK_EXPORT kernel                  \
   {                                      \
     public:                              \
-      static const char* GetOclSource(); \
+      static const char* GetOpenCLSource(); \
     private:                             \
       kernel();                          \
       virtual ~kernel();                 \
@@ -503,10 +503,10 @@ class ITK_EXPORT kernel                  \
       void operator=(const kernel &);    \
   };
 
-#define itkGetOclSourceFromKernelMacro(kernel) \
-  static const char* GetOclSource() \
+#define itkGetOpenCLSourceFromKernelMacro(kernel) \
+  static const char* GetOpenCLSource() \
   {                                 \
-    return kernel::GetOclSource();  \
+    return kernel::GetOpenCLSource();  \
   }
 /** Define two object creation methods.  The first method, New(),
  * creates an object from a class, potentially deferring to a factory.

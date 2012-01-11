@@ -91,7 +91,7 @@ int itkGPUImageTest(int argc, char *argv[])
   //std::string oclSrcPath = itk_root_path;
   //oclSrcPath += "/Modules/GPU/Common/ImageOps.cl";
 
-  const char* GPUSource = itk::GPUImageOps::GetOclSource();
+  const char* GPUSource = itk::GPUImageOps::GetOpenCLSource();
   kernelManager->LoadProgramFromString(GPUSource, "#define PIXELTYPE float\n");
 
   //

@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUGradientNDAnisotropicDiffusionFunction_txx
-#define __itkGPUGradientNDAnisotropicDiffusionFunction_txx
+#ifndef __itkGPUGradientNDAnisotropicDiffusionFunction_hxx
+#define __itkGPUGradientNDAnisotropicDiffusionFunction_hxx
 
 #include "itkNumericTraits.h"
 #include "itkGPUGradientNDAnisotropicDiffusionFunction.h"
 
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 
 namespace itk
 {
@@ -89,7 +89,7 @@ GPUGradientNDAnisotropicDiffusionFunction< TImage >
     }
 
   defines << "#define DIM_" << TImage::ImageDimension << "\n";
-  defines << "#define BLOCK_SIZE " << OclGetLocalBlockSize(TImage::ImageDimension) << "\n";
+  defines << "#define BLOCK_SIZE " << OpenCLGetLocalBlockSize(TImage::ImageDimension) << "\n";
 
   std::string pixeltypename = GetTypename( typeid(typename TImage::PixelType) );
   defines << "#define PIXELTYPE " << pixeltypename << "\n";
@@ -112,7 +112,7 @@ GPUGradientNDAnisotropicDiffusionFunction< TImage >
 #endif
   std::cout << "Defines: " << defines.str() << std::endl;
 
-  const char* GPUSource = GPUGradientNDAnisotropicDiffusionFunction::GetOclSource();
+  const char* GPUSource = GPUGradientNDAnisotropicDiffusionFunction::GetOpenCLSource();
 
   // load and build program
   this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );
@@ -148,7 +148,7 @@ GPUGradientNDAnisotropicDiffusionFunction< TImage >
     }
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
+  localSize[0] = localSize[1] = localSize[2] = OpenCLGetLocalBlockSize(ImageDim);
   for(int i=0; i<ImageDim; i++)
     {
     globalSize[i] = localSize[i]*(unsigned int)ceil( (float)outSize[i]/(float)localSize[i]); //

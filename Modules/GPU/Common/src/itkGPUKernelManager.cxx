@@ -85,7 +85,7 @@ bool GPUKernelManager::LoadProgramFromFile(const char* filename, const char* cPr
   cl_int errid;
   m_Program = clCreateProgramWithSource(
       m_Manager->GetCurrentContext(), 1, (const char **)&cSourceString, &szFinalLength, &errid);
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
   free(cSourceString);
 
   if(errid != CL_SUCCESS)
@@ -125,7 +125,7 @@ bool GPUKernelManager::LoadProgramFromFile(const char* filename, const char* cPr
 
     free( paramValue );
 
-    OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+    OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
     return false;
     }
@@ -158,7 +158,7 @@ bool GPUKernelManager::LoadProgramFromString(const char* cSource, const char* cP
   cl_int errid;
   m_Program = clCreateProgramWithSource(
       m_Manager->GetCurrentContext(), 1, (const char **)&cSourceString, &szFinalLength, &errid);
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
   // KMZ when is it safe to free the source string?  Seems like the program still keeps a reference to it, so deleting here is dangerous?
 //   free(cSourceString);
 
@@ -199,7 +199,7 @@ bool GPUKernelManager::LoadProgramFromString(const char* cSource, const char* cP
 
     free( paramValue );
 
-    OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+    OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
     return false;
     }
@@ -214,7 +214,7 @@ int GPUKernelManager::CreateKernel(const char* kernelName)
   // create kernel
   cl_kernel newKernel = clCreateKernel(m_Program, kernelName, &errid);
 
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
   if(errid != CL_SUCCESS)   // failed
     {
@@ -259,7 +259,7 @@ cl_int GPUKernelManager::GetKernelWorkGroupInfo(int kernelIdx,
   cl_int errid = clGetKernelWorkGroupInfo(m_KernelContainer[kernelIdx], m_Manager->GetDeviceId(0),
                                           paramName, valueSize, value, &valueSizeRet);
 
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
   return errid;
 }
@@ -271,7 +271,7 @@ bool GPUKernelManager::SetKernelArg(int kernelIdx, cl_uint argIdx, size_t argSiz
   cl_int errid;
 
   errid = clSetKernelArg(m_KernelContainer[kernelIdx], argIdx, argSize, argVal);
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
   m_KernelArgumentReady[kernelIdx][argIdx].m_IsReady = true;
   m_KernelArgumentReady[kernelIdx][argIdx].m_GPUDataManager = (GPUDataManager::Pointer)NULL;
@@ -286,7 +286,7 @@ bool GPUKernelManager::SetKernelArgWithImage(int kernelIdx, cl_uint argIdx, GPUD
   cl_int errid;
 
   errid = clSetKernelArg(m_KernelContainer[kernelIdx], argIdx, sizeof(cl_mem), manager->GetGPUBufferPointer() );
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
   m_KernelArgumentReady[kernelIdx][argIdx].m_IsReady = true;
   m_KernelArgumentReady[kernelIdx][argIdx].m_GPUDataManager = manager;
@@ -341,7 +341,7 @@ bool GPUKernelManager::LaunchKernel1D(int kernelIdx, size_t globalWorkSize, size
   errid = clEnqueueNDRangeKernel(m_Manager->GetCommandQueue(
                                    m_CommandQueueId), m_KernelContainer[kernelIdx], 1, NULL, &globalWorkSize,
                                  NULL, 0, NULL, NULL);
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
   if(errid != CL_SUCCESS)
     {
@@ -379,7 +379,7 @@ bool GPUKernelManager::LaunchKernel2D(int kernelIdx,
 //                                  lws, 0, NULL, NULL);
   errid = clEnqueueNDRangeKernel(m_Manager->GetCommandQueue(
                                    m_CommandQueueId), m_KernelContainer[kernelIdx], 2, NULL, gws, NULL, 0, NULL, NULL);
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
   if(errid != CL_SUCCESS)
     {
@@ -418,7 +418,7 @@ bool GPUKernelManager::LaunchKernel3D(int kernelIdx,
 //                                    m_CommandQueueId), m_KernelContainer[kernelIdx], 3, NULL, gws, lws, 0, NULL, NULL);
   errid = clEnqueueNDRangeKernel(m_Manager->GetCommandQueue(
                                    m_CommandQueueId), m_KernelContainer[kernelIdx], 3, NULL, gws, NULL, 0, NULL, NULL);
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
   if(errid != CL_SUCCESS)
     {
@@ -454,19 +454,19 @@ bool GPUKernelManager::LaunchKernel(int kernelIdx, int dim, size_t *globalWorkSi
   errid = clEnqueueNDRangeKernel(m_Manager->GetCommandQueue(
                                    m_CommandQueueId), m_KernelContainer[kernelIdx], (cl_uint)dim, NULL, globalWorkSize,
                                  NULL, 0, NULL, NULL);
-  OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+  OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
 /*
 std::cout << "Check point 1" << std::endl;
 
 // debug -- synchronize
 errid = clFlush(m_Manager->GetCommandQueue(m_CommandQueueId));
-OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
 std::cout << "Check point 2" << std::endl;
 */
 errid = clFinish(m_Manager->GetCommandQueue(m_CommandQueueId));
-OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 /*
 std::cout << "Wait for kernel execution ends" << std::endl;
 */

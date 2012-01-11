@@ -45,22 +45,22 @@ GPUContextManager::GPUContextManager()
 
   // Get the platforms
   errid = clGetPlatformIDs(0, NULL, &m_NumberOfPlatforms);
-  OclCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
+  OpenCLCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
 
   // Get NVIDIA platform by default
-  m_Platform = OclSelectPlatform("NVIDIA");
+  m_Platform = OpenCLSelectPlatform("NVIDIA");
   assert(m_Platform != NULL);
 
   cl_device_type devType = CL_DEVICE_TYPE_GPU;//CL_DEVICE_TYPE_CPU;//
 
   // Get the devices
-  m_Devices = OclGetAvailableDevices(m_Platform, devType, &m_NumberOfDevices);
+  m_Devices = OpenCLGetAvailableDevices(m_Platform, devType, &m_NumberOfDevices);
 
   // create context
   m_Context = clCreateContext(0, m_NumberOfDevices, m_Devices, NULL, NULL, &errid);
 //   m_Context = clCreateContext(0, m_NumberOfDevices, m_Devices, clLogMessagesToStdoutAPPLE, NULL, &errid);
 
-  OclCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
+  OpenCLCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
 
   // create command queues
   m_CommandQueue = (cl_command_queue *)malloc(m_NumberOfDevices * sizeof(cl_command_queue) );
@@ -69,9 +69,9 @@ GPUContextManager::GPUContextManager()
     m_CommandQueue[i] = clCreateCommandQueue(m_Context, m_Devices[i], 0, &errid);
 
 // Debug
-    OclPrintDeviceInfo(m_Devices[i], true);
+    OpenCLPrintDeviceInfo(m_Devices[i], true);
     //
-    OclCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
+    OpenCLCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
     }
 
   //m_current_command_queue_id = 0; // default command queue id

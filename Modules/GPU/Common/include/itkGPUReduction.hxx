@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUReduction_txx
-#define __itkGPUReduction_txx
+#ifndef __itkGPUReduction_hxx
+#define __itkGPUReduction_hxx
 
 #include "itkMacro.h"
 #include "itkGPUReduction.h"
@@ -117,7 +117,7 @@ GPUReduction< TElement >
 
   std::cout << "Defines: " << defines.str() << std::endl;
 
-  const char* GPUSource = GPUReduction::GetOclSource();
+  const char* GPUSource = GPUReduction::GetOpenCLSource();
 
   // load and build program
   this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );

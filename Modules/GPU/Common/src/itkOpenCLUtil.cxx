@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 #include <assert.h>
 #include <iostream>
 #include <algorithm>
@@ -25,7 +25,7 @@ namespace itk
 //
 // Get the block size based on the desired image dimension
 //
-int OclGetLocalBlockSize(unsigned int ImageDim)
+int OpenCLGetLocalBlockSize(unsigned int ImageDim)
 {
   /**
    * OpenCL workgroup (block) size for 1/2/3D - needs to be tuned based on the GPU architecture
@@ -46,7 +46,7 @@ int OclGetLocalBlockSize(unsigned int ImageDim)
 //
 // Get the devices that are available.
 //
-cl_device_id* OclGetAvailableDevices(cl_platform_id platform, cl_device_type devType, cl_uint* numAvailableDevices)
+cl_device_id* OpenCLGetAvailableDevices(cl_platform_id platform, cl_device_type devType, cl_uint* numAvailableDevices)
 {
   cl_device_id* availableDevices = NULL;
   cl_uint       totalNumDevices;
@@ -55,11 +55,11 @@ cl_device_id* OclGetAvailableDevices(cl_platform_id platform, cl_device_type dev
   cl_int errid;
 
   errid = clGetDeviceIDs(platform, devType, 0, NULL, &totalNumDevices);
-  OclCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
+  OpenCLCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
 
   cl_device_id* totalDevices = (cl_device_id *)malloc(totalNumDevices * sizeof(cl_device_id) );
   errid = clGetDeviceIDs(platform, devType, totalNumDevices, totalDevices, NULL);
-  OclCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
+  OpenCLCheckError( errid, __FILE__, __LINE__, ITK_LOCATION );
 
   (*numAvailableDevices) = 0;
 
@@ -97,7 +97,7 @@ cl_device_id* OclGetAvailableDevices(cl_platform_id platform, cl_device_type dev
 //
 // Get the device that has the maximum FLOPS in the current context
 //
-cl_device_id OclGetMaxFlopsDev(cl_context cxGPUContext)
+cl_device_id OpenCLGetMaxFlopsDev(cl_context cxGPUContext)
 {
   size_t        szParmDataBytes;
   cl_device_id* cdDevices;
@@ -154,7 +154,7 @@ cl_device_id OclGetMaxFlopsDev(cl_context cxGPUContext)
 //
 // Print device name & info
 //
-void OclPrintDeviceInfo(cl_device_id device, bool verbose)
+void OpenCLPrintDeviceInfo(cl_device_id device, bool verbose)
 {
   cl_int err;
 
@@ -191,7 +191,7 @@ void OclPrintDeviceInfo(cl_device_id device, bool verbose)
 //
 // Find the OpenCL platform that matches the "name"
 //
-cl_platform_id OclSelectPlatform(const char* name)
+cl_platform_id OpenCLSelectPlatform(const char* name)
 {
   char            chBuffer[1024];
   cl_uint         num_platforms;
@@ -260,7 +260,7 @@ cl_platform_id OclSelectPlatform(const char* name)
   return clSelectedPlatformID;
 }
 
-void OclCheckError(cl_int error, const char* filename, int lineno, const char* location)
+void OpenCLCheckError(cl_int error, const char* filename, int lineno, const char* location)
 {
   static const char* errorString[] = {
     "CL_SUCCESS",
@@ -352,7 +352,7 @@ void OclCheckError(cl_int error, const char* filename, int lineno, const char* l
 /** Check if OpenCL-enabled GPU is present. */
 bool IsGPUAvailable()
 {
-  cl_platform_id platformId = OclSelectPlatform("NVIDIA");
+  cl_platform_id platformId = OpenCLSelectPlatform("NVIDIA");
 
   if(platformId == NULL) return false;
 
@@ -360,7 +360,7 @@ bool IsGPUAvailable()
 
   // Get the devices
   cl_uint numDevices;
-  OclGetAvailableDevices(platformId, devType, &numDevices);
+  OpenCLGetAvailableDevices(platformId, devType, &numDevices);
 
   if(numDevices < 1) return false;
 

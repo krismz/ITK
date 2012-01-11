@@ -22,7 +22,7 @@
 #include "itkObject.h"
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 #include "itkGPUContextManager.h"
 #include "itkSimpleFastMutexLock.h"
 #include "itkMutexLockHolder.h"

@@ -1,5 +1,5 @@
-#ifndef __itkGPUBinaryThresholdImageFilter_txx
-#define __itkGPUBinaryThresholdImageFilter_txx
+#ifndef __itkGPUBinaryThresholdImageFilter_hxx
+#define __itkGPUBinaryThresholdImageFilter_hxx
 
 #include "itkGPUBinaryThresholdImageFilter.h"
 
@@ -77,7 +77,7 @@ GPUBinaryThresholdImageFilter< TInputImage, TOutputImage >
     }
 
   std::cout << "Defines: " << defines.str() << std::endl;
-  const char* GPUSource = GPUBinaryThresholdImageFilter::GetOclSource();
+  const char* GPUSource = GPUBinaryThresholdImageFilter::GetOpenCLSource();
 
   // load and build program
   this->m_GPUKernelManager->LoadProgramFromString( GPUSource, defines.str().c_str() );

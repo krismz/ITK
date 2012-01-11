@@ -124,8 +124,8 @@ public:
   /** GPU data pointer type. */
   typedef GPUDataManager::Pointer GPUDataPointer;
 
-  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
-  itkGetOclSourceFromKernelMacro(GPUDemonsRegistrationFunctionKernel);
+  /** Get OpenCL Kernel source as a string, creates a GetOpenCLSource method */
+  itkGetOpenCLSourceFromKernelMacro(GPUDemonsRegistrationFunctionKernel);
 
   /** Set the moving image interpolator. */
   void SetMovingImageInterpolator(InterpolatorType *ptr)

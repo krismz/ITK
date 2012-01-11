@@ -126,8 +126,8 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int,
                       GPUSuperclass::ImageDimension);
 
-  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
-itkGetOclSourceFromKernelMacro(GPUPDEDeformableRegistrationFilterKernel);
+  /** Get OpenCL Kernel source as a string, creates a GetOpenCLSource method */
+itkGetOpenCLSourceFromKernelMacro(GPUPDEDeformableRegistrationFilterKernel);
 
   /** Set the fixed image. */
   void SetFixedImage(const FixedImageType *ptr);

@@ -100,8 +100,8 @@ public:
   typedef Neighborhood< OperatorValueType,
                         itkGetStaticConstMacro(ImageDimension) > OutputNeighborhoodType;
 
-  /** Get OpenCL Kernel source as a string, creates a GetOclSource method */
-  itkGetOclSourceFromKernelMacro(GPUNeighborhoodOperatorImageFilterKernel);
+  /** Get OpenCL Kernel source as a string, creates a GetOpenCLSource method */
+  itkGetOpenCLSourceFromKernelMacro(GPUNeighborhoodOperatorImageFilterKernel);
 
   /** Sets the operator that is used to filter the image. Note
    * that the operator is stored as an internal COPY (it

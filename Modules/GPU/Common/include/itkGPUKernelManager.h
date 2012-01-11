@@ -26,7 +26,7 @@
 #include <vector>
 #include <itkLightObject.h>
 #include <itkObjectFactory.h>
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 #include "itkGPUImage.h"
 #include "itkGPUContextManager.h"
 #include "itkGPUDataManager.h"

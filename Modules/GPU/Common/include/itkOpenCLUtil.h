@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOclUtil_h
-#define __itkOclUtil_h
+#ifndef __itkOpenCLUtil_h
+#define __itkOpenCLUtil_h
 
 #include <string.h>
 #include <stdlib.h>
@@ -48,22 +48,22 @@ namespace itk
  * 2D : 16x16 = 256
  * 3D : 4x4x4 = 64
  */
-int OclGetLocalBlockSize(unsigned int ImageDim);
+int OpenCLGetLocalBlockSize(unsigned int ImageDim);
 
 /** Get the devices that are available */
-cl_device_id* OclGetAvailableDevices(cl_platform_id platform, cl_device_type devType, cl_uint* numAvailableDevices);
+cl_device_id* OpenCLGetAvailableDevices(cl_platform_id platform, cl_device_type devType, cl_uint* numAvailableDevices);
 
 /** Get the device that has the maximum FLOPS in the current context */
-cl_device_id OclGetMaxFlopsDev(cl_context cxGPUContext);
+cl_device_id OpenCLGetMaxFlopsDev(cl_context cxGPUContext);
 
 /** Print device name and info */
-void OclPrintDeviceInfo(cl_device_id device, bool verbose=false);
+void OpenCLPrintDeviceInfo(cl_device_id device, bool verbose=false);
 
 /** Find the OpenCL platform that matches the "name" */
-cl_platform_id OclSelectPlatform(const char* name);
+cl_platform_id OpenCLSelectPlatform(const char* name);
 
 /** Check OpenCL error */
-void OclCheckError(cl_int error, const char* filename="", int lineno=0, const char* location="");
+void OpenCLCheckError(cl_int error, const char* filename="", int lineno=0, const char* location="");
 
 /** Check if OpenCL-enabled GPU is present. */
 bool IsGPUAvailable();

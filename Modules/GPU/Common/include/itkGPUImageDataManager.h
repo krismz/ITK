@@ -32,7 +32,7 @@
 #include <itkTimeStamp.h>
 #include <itkLightObject.h>
 #include <itkObjectFactory.h>
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 #include "itkGPUImage.h"
 #include "itkGPUDataManager.h"
 #include "itkGPUContextManager.h"

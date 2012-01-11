@@ -58,7 +58,7 @@ void GPUDataManager::Allocate()
 std::cout << "Create GPU buffer of size " << m_BufferSize << " Bytes" << std::endl;
 #endif
     m_GPUBuffer = clCreateBuffer(m_ContextManager->GetCurrentContext(), m_MemFlags, m_BufferSize, NULL, &errid);
-    OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+    OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
     }
 
   //m_IsGPUBufferDirty = true;
@@ -105,7 +105,7 @@ void GPUDataManager::UpdateCPUBuffer()
 #endif
     errid = clEnqueueReadBuffer(m_ContextManager->GetCommandQueue(
                                   m_CommandQueueId), m_GPUBuffer, CL_TRUE, 0, m_BufferSize, m_CPUBuffer, 0, NULL, NULL);
-    OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+    OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
     m_IsCPUBufferDirty = false;
     }
@@ -123,7 +123,7 @@ void GPUDataManager::UpdateGPUBuffer()
 #endif
     errid = clEnqueueWriteBuffer(m_ContextManager->GetCommandQueue(
                                    m_CommandQueueId), m_GPUBuffer, CL_TRUE, 0, m_BufferSize, m_CPUBuffer, 0, NULL, NULL);
-    OclCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
+    OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
     m_IsGPUBufferDirty = false;
     }

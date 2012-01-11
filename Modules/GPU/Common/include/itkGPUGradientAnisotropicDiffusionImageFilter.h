@@ -18,7 +18,7 @@
 #ifndef __itkGPUGradientAnisotropicDiffusionImageFilter_h
 #define __itkGPUGradientAnisotropicDiffusionImageFilter_h
 
-#include "itkOclUtil.h"
+#include "itkOpenCLUtil.h"
 #include "itkGradientAnisotropicDiffusionImageFilter.h"
 #include "itkGPUAnisotropicDiffusionImageFilter.h"
 #include "itkGPUGradientNDAnisotropicDiffusionFunction.h"
