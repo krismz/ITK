@@ -450,7 +450,7 @@ GPUPDEDeformableRegistrationFilter< TFixedImage, TMovingImage, TDeformationField
     }
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = BLOCK_SIZE[ImageDim-1];
+  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
   for(int i=0; i<ImageDim; i++)
     {
     globalSize[i] = localSize[i]*(unsigned int)ceil( (float)outSize[i]/(float)localSize[i]); //

@@ -39,11 +39,16 @@
 
 #include <itkMacro.h>
 
-/** OpenCL workgroup (block) size for 1/2/3D - needs to be tuned based on the GPU architecture
+namespace itk
+{
+/** Get the local block size based on the desired Image Dimension
+ * currently set as follows:
+ * OpenCL workgroup (block) size for 1/2/3D - needs to be tuned based on the GPU architecture
  * 1D : 256
  * 2D : 16x16 = 256
- * 3D : 4x4x4 = 64  */
-static int BLOCK_SIZE[3] = { 256, 16, 4 /*8*/ };
+ * 3D : 4x4x4 = 64
+ */
+int OclGetLocalBlockSize(unsigned int ImageDim);
 
 /** Get the devices that are available */
 cl_device_id* OclGetAvailableDevices(cl_platform_id platform, cl_device_type devType, cl_uint* numAvailableDevices);
@@ -78,5 +83,7 @@ void GetTypenameInString( const std::type_info& intype, std::ostringstream& ret 
 /** Get pixel dimension (number of channels).
  * For high-dimensional pixel format, only itk::Vector< type, 2/3 > is acceptable. */
 int GetPixelDimension( const std::type_info& intype );
+
+}
 
 #endif

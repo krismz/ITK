@@ -43,7 +43,7 @@ GPUScalarAnisotropicDiffusionFunction< TImage >
     }
 
   defines << "#define DIM_" << ImageDimension << "\n";
-  defines << "#define BLOCK_SIZE " << BLOCK_SIZE[ImageDimension-1] << "\n";
+  defines << "#define BLOCK_SIZE " << OclGetLocalBlockSize(ImageDimension) << "\n";
 
   defines << "#define PIXELTYPE ";
   GetTypenameInString( typeid ( typename TImage::PixelType ), defines );
@@ -76,7 +76,7 @@ GPUScalarAnisotropicDiffusionFunction< TImage >
   int ImageDim = (int)TImage::ImageDimension;
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = BLOCK_SIZE[ImageDim-1];
+  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
 
   unsigned int numPixel = 1;
   unsigned int bufferSize = 1;

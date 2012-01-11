@@ -53,7 +53,7 @@ int itkGPUBinaryThresholdImageFilterTest(int argc, char *argv[])
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
 
-  if(!IsGPUAvailable())
+  if(!itk::IsGPUAvailable())
   {
     std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
     return EXIT_FAILURE;

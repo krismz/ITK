@@ -323,7 +323,7 @@ void GPUKernelManager::ResetArguments(int kernelIdx)
     }
 }
 
-bool GPUKernelManager::LaunchKernel1D(int kernelIdx, size_t globalWorkSize, size_t localWorkSize)
+bool GPUKernelManager::LaunchKernel1D(int kernelIdx, size_t globalWorkSize, size_t itkNotUsed(localWorkSize))
 {
   if(kernelIdx < 0 || kernelIdx >= (int)m_KernelContainer.size() ) return false;
 
@@ -429,7 +429,7 @@ bool GPUKernelManager::LaunchKernel3D(int kernelIdx,
   return true;
 }
 
-bool GPUKernelManager::LaunchKernel(int kernelIdx, int dim, size_t *globalWorkSize, size_t *localWorkSize)
+bool GPUKernelManager::LaunchKernel(int kernelIdx, int dim, size_t *globalWorkSize, size_t *itkNotUsed(localWorkSize))
 {
   if(kernelIdx < 0 || kernelIdx >= (int)m_KernelContainer.size() ) return false;
 

@@ -144,7 +144,7 @@ protected:
   /** This method is defined by a subclass to apply changes to the output
    * from an update buffer and a time step value "dt".
    * \param dt Time step value. */
-  virtual void GPUApplyUpdate(TimeStepType dt) = 0;
+  virtual void GPUApplyUpdate(const TimeStepType& dt) = 0;
 
   /** This method is defined by a subclass to populate an update buffer
    * with changes for the pixels in the output.  It returns a time
@@ -225,8 +225,8 @@ protected:
    * \param size The size of "list" and "valid"
    *
    * The default is to return the minimum value in the list. */
-  virtual TimeStepType ResolveTimeStep(const TimeStepType *timeStepList,
-                                       const bool *valid, int size);
+virtual TimeStepType ResolveTimeStep(const std::vector<TimeStepType >& timeStepList,
+                                     const std::vector< bool >& valid) const;
 
   /** This method is called after the solution has been generated to allow
    * subclasses to apply some further processing to the output. */
@@ -234,7 +234,7 @@ protected:
   }
 
   /** Set the number of elapsed iterations of the filter. */
-  itkSetMacro(ElapsedIterations, unsigned int);
+  itkSetMacro(ElapsedIterations, IdentifierType);
 
   /** The maximum number of iterations this filter will run */
 

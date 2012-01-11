@@ -31,6 +31,11 @@ typedef itk::GPUImage<float, 2> ItkImage1f;
 
 int itkGPUImageTest(int argc, char *argv[])
 {
+  if (argc > 1)
+  {
+    std::cout << "received " << argc << " arguments, but didn't expect any."
+              << "first ignored argument: " << argv[1] << std::endl;
+  }
   unsigned int width, height;
 
   width  = 256;

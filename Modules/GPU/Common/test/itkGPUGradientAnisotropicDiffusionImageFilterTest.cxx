@@ -49,7 +49,7 @@ int itkGPUGradientAnisotropicDiffusionImageFilterTest(int argc, char *argv[])
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-  if(!IsGPUAvailable())
+  if(!itk::IsGPUAvailable())
   {
     std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
     return EXIT_FAILURE;

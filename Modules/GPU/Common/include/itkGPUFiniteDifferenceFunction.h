@@ -88,9 +88,9 @@ public:
 
 #if !defined( CABLE_CONFIGURATION )
   /** Empty implementation - this will not be used by GPU filters */
-  virtual PixelType  ComputeUpdate( const NeighborhoodType & neighborhood,
-                                    void *globalData,
-                                    const FloatOffsetType & offset = FloatOffsetType(0.0) )
+  virtual PixelType  ComputeUpdate( const NeighborhoodType & itkNotUsed(neighborhood),
+                                    void *itkNotUsed(globalData),
+                                    const FloatOffsetType & itkNotUsed(offset = FloatOffsetType(0.0)) )
   {
     PixelType pix = itk::NumericTraits<PixelType>::Zero;
 

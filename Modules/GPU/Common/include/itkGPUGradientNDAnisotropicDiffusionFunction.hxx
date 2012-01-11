@@ -89,7 +89,7 @@ GPUGradientNDAnisotropicDiffusionFunction< TImage >
     }
 
   defines << "#define DIM_" << TImage::ImageDimension << "\n";
-  defines << "#define BLOCK_SIZE " << BLOCK_SIZE[TImage::ImageDimension-1] << "\n";
+  defines << "#define BLOCK_SIZE " << OclGetLocalBlockSize(TImage::ImageDimension) << "\n";
 
   std::string pixeltypename = GetTypename( typeid(typename TImage::PixelType) );
   defines << "#define PIXELTYPE " << pixeltypename << "\n";
@@ -124,7 +124,7 @@ GPUGradientNDAnisotropicDiffusionFunction< TImage >
 template< class TImage >
 void
 GPUGradientNDAnisotropicDiffusionFunction< TImage >
-::GPUComputeUpdate( const typename TImage::Pointer output, typename TImage::Pointer buffer, void *globalData )
+::GPUComputeUpdate( const typename TImage::Pointer output, typename TImage::Pointer buffer, void *itkNotUsed(globalData) )
 {
   /** Launch GPU kernel to update buffer with output
    * GPU version of ComputeUpdate() - compute entire update buffer */
@@ -148,7 +148,7 @@ GPUGradientNDAnisotropicDiffusionFunction< TImage >
     }
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = BLOCK_SIZE[ImageDim-1];
+  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
   for(int i=0; i<ImageDim; i++)
     {
     globalSize[i] = localSize[i]*(unsigned int)ceil( (float)outSize[i]/(float)localSize[i]); //

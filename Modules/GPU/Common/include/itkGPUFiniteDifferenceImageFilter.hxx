@@ -191,24 +191,27 @@ GPUFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
 template< class TInputImage, class TOutputImage, class TParentImageFilter >
 typename GPUFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >::TimeStepType
 GPUFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
-::ResolveTimeStep(const TimeStepType *timeStepList, const bool *valid, int size)
+::ResolveTimeStep(const std::vector< TimeStepType >& timeStepList, const std::vector< bool >& valid) const
 {
-  TimeStepType min;
-  bool         flag;
+  TimeStepType oMin = NumericTraits< TimeStepType >::Zero;;
+  bool         flag = false;
 
-  min = NumericTraits< TimeStepType >::Zero;
+  typename std::vector< TimeStepType >::const_iterator t_it = timeStepList.begin();
+  typename std::vector< TimeStepType >::const_iterator t_end = timeStepList.end();
+  typename std::vector< bool >::const_iterator v_it = valid.begin();
 
   // grab first valid value
-  flag = false;
-  for ( int i = 0; i < size; ++i )
+  while ( t_it != t_end )
+  {
+    if ( *v_it )
     {
-    if ( valid[i] )
-      {
-      min = timeStepList[i];
+      oMin = *t_it;
       flag = true;
       break;
-      }
     }
+    ++t_it;
+    ++v_it;
+  }
 
   if ( !flag )
     {
@@ -218,12 +221,19 @@ GPUFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
     }
 
   // find minimum value
-  for ( int i = 0; i < size; ++i )
+  t_it = timeStepList.begin();
+  v_it = valid.begin();
+  while( t_it != t_end )
+  {
+    if( *v_it && ( *t_it < oMin ) )
     {
-    if ( valid[i] && ( timeStepList[i] < min ) ) { min = timeStepList[i]; }
+      oMin = *t_it;
     }
+    ++t_it;
+    ++v_it;
+  }
 
-  return min;
+  return oMin;
 }
 
 template< class TInputImage, class TOutputImage, class TParentImageFilter >

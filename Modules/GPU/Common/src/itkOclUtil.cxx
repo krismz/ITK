@@ -19,6 +19,30 @@
 #include <assert.h>
 #include <iostream>
 #include <algorithm>
+
+namespace itk
+{
+//
+// Get the block size based on the desired image dimension
+//
+int OclGetLocalBlockSize(unsigned int ImageDim)
+{
+  /**
+   * OpenCL workgroup (block) size for 1/2/3D - needs to be tuned based on the GPU architecture
+   * 1D : 256
+   * 2D : 16x16 = 256
+   * 3D : 4x4x4 = 64
+   */
+  int OPENCL_BLOCK_SIZE[3] = { 256, 16, 4 /*8*/ };
+
+
+  if (ImageDim > 3)
+  {
+    itkGenericExceptionMacro("Only ImageDimensions up to 3 are supported");
+  }
+  return OPENCL_BLOCK_SIZE[ImageDim-1];
+}
+
 //
 // Get the devices that are available.
 //
@@ -486,3 +510,5 @@ int GetPixelDimension( const std::type_info& intype )
     itkGenericExceptionMacro("Pixeltype is not supported by the filter.");
     }
 }
+
+} // end namespace itk

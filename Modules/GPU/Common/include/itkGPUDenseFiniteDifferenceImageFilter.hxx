@@ -93,7 +93,7 @@ GPUDenseFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilt
 template< class TInputImage, class TOutputImage, class TParentImageFilter >
 void
 GPUDenseFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
-::ApplyUpdate(TimeStepType dt)
+::ApplyUpdate(const TimeStepType& dt)
 {
   this->GPUApplyUpdate( dt );
 }
@@ -101,7 +101,7 @@ GPUDenseFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilt
 template< class TInputImage, class TOutputImage, class TParentImageFilter >
 void
 GPUDenseFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
-::GPUApplyUpdate(TimeStepType dt)
+::GPUApplyUpdate(const TimeStepType& dt)
 {
   // GPU version of ApplyUpdate
   // Single threaded version : Apply entire update buffer to output image
@@ -126,7 +126,7 @@ GPUDenseFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilt
     }
 
   size_t localSize[3], globalSize[3];
-  localSize[0] = localSize[1] = localSize[2] = BLOCK_SIZE[ImageDim-1];
+  localSize[0] = localSize[1] = localSize[2] = OclGetLocalBlockSize(ImageDim);
   for(int i=0; i<ImageDim; i++)
     {
     globalSize[i] = localSize[i]*(unsigned int)ceil( (float)outSize[i]/(float)localSize[i]); //

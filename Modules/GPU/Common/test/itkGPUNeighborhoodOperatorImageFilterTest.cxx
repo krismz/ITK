@@ -41,7 +41,7 @@
 
 int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
 {
-  if(!IsGPUAvailable())
+  if(!itk::IsGPUAvailable())
   {
     std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
     return EXIT_FAILURE;
