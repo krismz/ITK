@@ -217,7 +217,7 @@ void
 GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDeformationField >
 ::GPUComputeUpdate( DeformationFieldTypePointer output,
                     DeformationFieldTypePointer update,
-                    void *gd
+                    void *itkNotUsed(gd)
                     )
 {
   typename TFixedImage::ConstPointer      fixedImage  = dynamic_cast< const TFixedImage * >( this->GetFixedImage() );

@@ -19,7 +19,7 @@
 #define __itkGPUImageDataManager_hxx
 
 #include "itkGPUImageDataManager.h"
-
+#include "itkOpenCLUtil.h"
 //#define VERBOSE
 
 namespace itk

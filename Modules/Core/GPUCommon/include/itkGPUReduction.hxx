@@ -128,6 +128,8 @@ GPUReduction< TElement >
 
   size_t wgSize;
   cl_int ciErrNum = this->m_GPUKernelManager->GetKernelWorkGroupInfo(handle, CL_KERNEL_WORK_GROUP_SIZE, &wgSize);
+  OpenCLCheckError(ciErrNum, __FILE__, __LINE__, ITK_LOCATION);
+
   m_SmallBlock = (wgSize == 64);
 
   // NOTE: the program will get deleted when the kernel is also released
@@ -250,8 +252,6 @@ GPUReduction< TElement >
   bool cpuFinalReduction = true;
   int  cpuFinalThreshold = 1;
 
-  unsigned long bytes = size * sizeof(TElement);
-
   int numBlocks = 0;
   int numThreads = 0;
 
@@ -276,8 +276,6 @@ GPUReduction< TElement >
                                 cpuFinalThreshold, &dTotalTime,
                                 m_GPUDataManager, odata);
 
-  double reduceTime = dTotalTime;
-
   // cleanup
   free(h_odata);
 
@@ -290,12 +288,12 @@ GPUReduction< TElement >
 ::GPUReduce(  cl_int  n,
               int  numThreads,
               int  numBlocks,
-              int  maxThreads,
-              int  maxBlocks,
-              int  whichKernelId,
-              bool cpuFinalReduction,
-              int  cpuFinalThreshold,
-              double* dTotalTime,
+              int  itkNotUsed(maxThreads),
+              int  itkNotUsed(maxBlocks),
+              int  itkNotUsed(whichKernelId),
+              bool itkNotUsed(cpuFinalReduction),
+              int  itkNotUsed(cpuFinalThreshold),
+              double* itkNotUsed(dTotalTime),
               GPUDataPointer idata,
               GPUDataPointer odata)
 {

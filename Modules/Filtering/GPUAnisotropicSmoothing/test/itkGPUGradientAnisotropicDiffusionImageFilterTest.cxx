@@ -17,50 +17,41 @@
 *=========================================================================*/
 
 /**
- * Test program for itkGPUMeanImageFilter class
- *
- * This program creates a GPU Mean filter test pipelining.
+ * Test program for GPUGradientAnisotropicDiffusionImageFilter class
  */
-
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkMeanImageFilter.h"
+#include "itkGradientAnisotropicDiffusionImageFilter.h"
+#include "itkTimeProbe.h"
+#include "itkImageRegionIterator.h"
 
+#include "itkOpenCLUtil.h"
 #include "itkGPUImage.h"
 #include "itkGPUKernelManager.h"
 #include "itkGPUContextManager.h"
 #include "itkGPUImageToImageFilter.h"
-#include "itkGPUMeanImageFilter.h"
+#include "itkGPUGradientAnisotropicDiffusionImageFilter.h"
 
-#include "itkRescaleIntensityImageFilter.h"
-#include "itkTimeProbe.h"
-
-/**
- * Testing GPU Mean Image Filter
- */
-int itkGPUMeanImageFilterTest(int argc, char *argv[])
+int itkGPUGradientAnisotropicDiffusionImageFilterTest(int argc, char *argv[])
 {
-  if(!itk::IsGPUAvailable())
-  {
-    std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
-    return EXIT_FAILURE;
-  }
-
   // register object factory for GPU image and filter
   //itk::ObjectFactoryBase::RegisterFactory( itk::GPUImageFactory::New() );
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUMeanImageFilterFactory::New() );
+  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUGradientAnisotropicDiffusionImageFilterFactory::New() );
 
-  typedef   unsigned char  InputPixelType;
-  typedef   unsigned char  OutputPixelType;
-
-  //typedef itk::Image< InputPixelType,  3 >   InputImageType;
-  //typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
+  typedef float InputPixelType;
+  typedef float OutputPixelType;
 
   typedef itk::GPUImage< InputPixelType,  3 >   InputImageType;
   typedef itk::GPUImage< OutputPixelType, 3 >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
+
+  if(!itk::IsGPUAvailable())
+  {
+    std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
@@ -70,7 +61,7 @@ int itkGPUMeanImageFilterTest(int argc, char *argv[])
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "inputfile outputfile " << std::endl;
     return EXIT_FAILURE;
-    //reader->SetFileName( "/Users/wkjeong/Proj/ITK/Examples/Data/BrainProtonDensitySlice.png" ); //"C:/Users/wkjeong/Proj/ITK/Modules/GPU/Common/data/input-testvolume.nrrd" );
+    //reader->SetFileName( "C:/Users/wkjeong/Proj/ITK/Modules/GPU/Common/data/input-testvolume.nrrd" );
   }
   else
   {
@@ -78,54 +69,72 @@ int itkGPUMeanImageFilterTest(int argc, char *argv[])
     writer->SetFileName( argv[2] );
   }
 
-  //
-  // Note: We use regular itk filter type here but factory will automatically create
-  //       GPU filter for Median filter and CPU filter for threshold filter.
-  //
-  typedef itk::MeanImageFilter< InputImageType, OutputImageType > MeanFilterType;
-  typedef itk::GPUMeanImageFilter< InputImageType, OutputImageType > GPUMeanFilterType;
+  // Create CPU/GPU anistorpic diffusion filter
+  typedef itk::GradientAnisotropicDiffusionImageFilter< InputImageType, OutputImageType > CPUAnisoDiffFilterType;
+  typedef itk::GPUGradientAnisotropicDiffusionImageFilter< InputImageType, OutputImageType > GPUAnisoDiffFilterType;
 
-  // Mean filter kernel radius
-  InputImageType::SizeType indexRadius;
-  indexRadius[0] = 2; // radius along x
-  indexRadius[1] = 2; // radius along y
-  indexRadius[2] = 2; // radius along z
+  CPUAnisoDiffFilterType::Pointer CPUFilter = CPUAnisoDiffFilterType::New();
+  GPUAnisoDiffFilterType::Pointer GPUFilter = GPUAnisoDiffFilterType::New();
+
+  reader->Update();
+
+  // -------
 
   // test 1~8 threads for CPU
   for(int nThreads = 1; nThreads <= 8; nThreads++)
   {
-    MeanFilterType::Pointer CPUFilter = MeanFilterType::New();
-
     itk::TimeProbe cputimer;
     cputimer.Start();
 
     CPUFilter->SetNumberOfThreads( nThreads );
 
     CPUFilter->SetInput( reader->GetOutput() );
-    CPUFilter->SetRadius( indexRadius );
+    CPUFilter->SetNumberOfIterations( 10 );
+    CPUFilter->SetTimeStep( 0.0625 );//125 );
+    CPUFilter->SetConductanceParameter( 3.0 );
+    CPUFilter->UseImageSpacingOn();
     CPUFilter->Update();
 
     cputimer.Stop();
 
-    std::cout << "CPU mean filter took " << cputimer.GetMeanTime() << " seconds with "
+    std::cout << "CPU Anisotropic diffusion took " << cputimer.GetMeanTime() << " seconds with "
               << CPUFilter->GetNumberOfThreads() << " threads.\n" << std::endl;
 
     // -------
 
     if( nThreads == 8 )
     {
-      GPUMeanFilterType::Pointer GPUFilter = GPUMeanFilterType::New();
-
       itk::TimeProbe gputimer;
       gputimer.Start();
 
       GPUFilter->SetInput( reader->GetOutput() );
-      GPUFilter->SetRadius( indexRadius );
-      GPUFilter->Update();
-      GPUFilter->GetOutput()->UpdateBuffers(); // synchronization point (GPU->CPU memcpy)
+      GPUFilter->SetNumberOfIterations( 10 );
+      GPUFilter->SetTimeStep( 0.0625 );//125 );
+      GPUFilter->SetConductanceParameter( 3.0 );
+      GPUFilter->UseImageSpacingOn();
+      try
+      {
+        GPUFilter->Update();
+      }
+      catch (itk::ExceptionObject& excp)
+      {
+        std::cout << "Caught exception during GPUFilter->Update() " << excp << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      try
+      {
+        GPUFilter->GetOutput()->UpdateBuffers(); // synchronization point
+      }
+      catch (itk::ExceptionObject& excp)
+      {
+        std::cout << "Caught exception during GPUFilter->GetOutput()->UpdateBuffers() " << excp << std::endl;
+        return EXIT_FAILURE;
+      }
+
 
       gputimer.Stop();
-      std::cout << "GPU mean filter took " << gputimer.GetMeanTime() << " seconds.\n" << std::endl;
+      std::cout << "GPU Anisotropic diffusion took " << gputimer.GetMeanTime() << " seconds.\n" << std::endl;
 
       // ---------------
       // RMS Error check
@@ -138,11 +147,15 @@ int itkGPUMeanImageFilterTest(int argc, char *argv[])
 
       for(cit.GoToBegin(), git.GoToBegin(); !cit.IsAtEnd(); ++cit, ++git)
       {
-        //std::cout << "CPU : " << (double)(cit.Get()) << ", GPU : " << (double)(git.Get()) << std::endl;
         double err = (double)(cit.Get()) - (double)(git.Get());
         diff += err*err;
         nPix++;
       }
+      writer->SetInput( GPUFilter->GetOutput() ); // copy GPU->CPU implicilty
+
+      // execute pipeline filter and write output
+      writer->Update();
+
       if (nPix > 0)
       {
         double RMSError = sqrt( diff / (double)nPix );
@@ -165,6 +178,7 @@ int itkGPUMeanImageFilterTest(int argc, char *argv[])
         return EXIT_FAILURE;
       }
     }
+
   }
 
   return EXIT_SUCCESS;

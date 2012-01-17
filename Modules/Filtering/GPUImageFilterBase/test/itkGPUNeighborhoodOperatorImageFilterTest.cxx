@@ -18,7 +18,6 @@
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkMeanImageFilter.h"
 
 #include "itkGPUImage.h"
 #include "itkGPUKernelManager.h"
@@ -26,12 +25,8 @@
 #include "itkGPUImageToImageFilter.h"
 #include "itkGPUNeighborhoodOperatorImageFilter.h"
 
-#include "itkRescaleIntensityImageFilter.h"
 #include "itkTimeProbe.h"
 #include "itkGaussianOperator.h"
-
-#include "itkDiscreteGaussianImageFilter.h"
-#include "itkGPUDiscreteGaussianImageFilter.h"
 
 /**
  * Testing GPU Neighborhood Operator Image Filter
@@ -49,7 +44,6 @@ int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
 
   // register object factory for GPU image and filter
   //itk::ObjectFactoryBase::RegisterFactory( itk::GPUImageFactory::New() );
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUMeanImageFilterFactory::New() );
 
   typedef float InputPixelType;
   typedef float OutputPixelType;

@@ -18,7 +18,6 @@
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkMeanImageFilter.h"
 
 #include "itkGPUImage.h"
 #include "itkGPUKernelManager.h"
@@ -26,7 +25,6 @@
 #include "itkGPUImageToImageFilter.h"
 #include "itkGPUNeighborhoodOperatorImageFilter.h"
 
-#include "itkRescaleIntensityImageFilter.h"
 #include "itkTimeProbe.h"
 #include "itkGaussianOperator.h"
 
@@ -46,10 +44,6 @@ int itkGPUDiscreteGaussianImageFilterTest(int argc, char *argv[])
     std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
     return EXIT_FAILURE;
   }
-
-  // register object factory for GPU image and filter
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUImageFactory::New() );
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUMeanImageFilterFactory::New() );
 
   typedef float InputPixelType;
   typedef float OutputPixelType;

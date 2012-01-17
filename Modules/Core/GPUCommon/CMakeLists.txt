@@ -1,11 +1,6 @@
 project(ITKGPUCommon)
 
 if (ITK_USE_GPU)
-  find_package ( OpenCL REQUIRED )
-  if ( NOT ${OPENCL_FOUND} )
-     message ( FATAL "Could not find OpenCL" )
-  endif ()
-
   set(ITKGPUCommon_LIBRARIES ITKGPUCommon)
   set(ITKGPUCommon_SYSTEM_INCLUDE_DIRS ${OPENCL_INCLUDE_DIRS})
   set(ITKGPUCommon_SYSTEM_LIBRARY_DIRS ${OPENCL_LIBRARIES})
