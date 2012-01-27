@@ -49,7 +49,7 @@ namespace itk
  * anisotropic diffusion,'' IEEE Transactions on Pattern Analysis Machine
  * Intelligence, vol. 12, pp. 629-639, 1990.
  *
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUAnisotropicSmoothing
  */
 
 /** Create a helper GPU Kernel class for GPUGradientNDAnisotropicDiffusionFunction */

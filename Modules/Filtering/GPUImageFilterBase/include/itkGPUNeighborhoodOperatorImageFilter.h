@@ -37,7 +37,7 @@ namespace itk
  * across every pixel in an image region.
  *
  * \author Won-Ki Jeong (wkjeong@seas.harvard.edu)
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUImageFilterBase
  */
 
 /** Create a helper GPU Kernel class for GPUNeighborhoodOperatorImageFilter */

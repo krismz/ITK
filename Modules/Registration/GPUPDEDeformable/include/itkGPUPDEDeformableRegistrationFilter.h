@@ -69,7 +69,7 @@ namespace itk
  * \sa PDEDeformableRegistrationFunction.
  * \ingroup DeformableImageRegistration
  * \ingroup ITKPDEDeformableRegistration
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUPDEDeformableRegistration
  */
 
 /** Create a helper GPU Kernel class for GPUPDEDeformableRegistrationFilter */

@@ -44,7 +44,7 @@ namespace itk
  * This filter can be used as a base class for GPU implementation of
  * DenseFiniteDifferenceImageFilter.
  *
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUFiniteDifference
  */
 
 /** Create a helper GPU Kernel class for GPUDenseFiniteDifferenceImageFilter */

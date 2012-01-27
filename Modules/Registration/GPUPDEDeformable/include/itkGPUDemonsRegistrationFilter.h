@@ -62,7 +62,7 @@ namespace itk
  *
  * \sa GPUDemonsRegistrationFunction
  * \ingroup DeformableImageRegistration MultiThreaded
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUPDEDeformableRegistration
  */
 template< class TFixedImage, class TMovingImage, class TDeformationField,
           class TParentImageFilter = itk::DemonsRegistrationFilter< TFixedImage, TMovingImage, TDeformationField >
@@ -158,7 +158,7 @@ private:
 /** \class GPUDemonsRegistrationFilterFactory
  *
  * \brief Object Factory implemenatation for GPUDemonsRegistrationFilter
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUPDEDeformableRegistration
  */
 class GPUDemonsRegistrationFilterFactory : public itk::ObjectFactoryBase
 {

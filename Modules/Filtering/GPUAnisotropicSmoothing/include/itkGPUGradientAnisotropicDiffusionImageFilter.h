@@ -25,7 +25,7 @@
 
 namespace itk
 {
-/** \class GPUGradientAnisotropicDiffusionImageFilter
+/**
  *
  * This filter performs anisotropic diffusion on a scalar itk::Image using the
  * classic Perona-Malik, gradient magnitude based equation implemented in
@@ -41,7 +41,7 @@ namespace itk
  * Please see the description of parameters given in
  * itkAnisotropicDiffusionImageFilter.
  *
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUAnistropicSmoothing
  */
 template< class TInputImage, class TOutputImage, class TParentImageFilter =
             GradientAnisotropicDiffusionImageFilter< TInputImage, TOutputImage > >

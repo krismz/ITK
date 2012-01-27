@@ -32,7 +32,7 @@ namespace itk
  * CalculateAverageGradientMagnitudeSquared(), which is called before each
  * iteration to recalibrate the conductance term.
  *
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUAnisotropicSmoothing
  */
 template< class TImage >
 class ITK_EXPORT GPUAnisotropicDiffusionFunction :

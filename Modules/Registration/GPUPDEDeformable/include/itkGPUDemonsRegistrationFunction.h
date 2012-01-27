@@ -48,7 +48,7 @@ namespace itk
  *
  * \sa DemonsRegistrationFilter
  * \ingroup FiniteDifferenceFunctions
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUPDEDeformableRegistration
  */
 /** Create a helper GPU Kernel class for GPUDemonsRegistrationFunction */
 itkGPUKernelClassMacro(GPUDemonsRegistrationFunctionKernel);

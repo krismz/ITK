@@ -40,7 +40,7 @@ namespace itk
  * When the Gaussian kernel is small, this filter tends to run faster than
  * itk::RecursiveGaussianImageFilter.
  *
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUSmoothing
  */
 
 template< class TInputImage, class TOutputImage >

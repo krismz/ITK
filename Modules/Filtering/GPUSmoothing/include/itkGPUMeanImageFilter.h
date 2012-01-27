@@ -32,7 +32,7 @@ namespace itk
  *
  * Current GPU mean filter reads in neighborhood pixels from global memory.
  *
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUSmoothing
  */
 
 /** Create a helper GPU Kernel class for GPUMeanImageFilter */
@@ -95,7 +95,7 @@ private:
 /** \class GPUMeanImageFilterFactory
  *
  * \brief Object Factory implemenatation for GPUMeanImageFilter
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUSmoothing
  */
 class GPUMeanImageFilterFactory : public ObjectFactoryBase
 {

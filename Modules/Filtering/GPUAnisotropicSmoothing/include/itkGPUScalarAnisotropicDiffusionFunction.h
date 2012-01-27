@@ -28,7 +28,7 @@ namespace itk
  * This class forms the base for any GPU anisotropic diffusion function that
  * operates on scalar data (see itkGPUAnisotropicDiffusionFunction).
  *
- * \ingroup ITKGPUCommon
+ * \ingroup ITKGPUAnisotropicSmoothing
  * */
 
 /** Create a helper GPU Kernel class for GPUScalarAnisotropicDiffusionFunction */
