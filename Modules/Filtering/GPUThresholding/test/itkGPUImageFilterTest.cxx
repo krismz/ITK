@@ -35,34 +35,25 @@
 #include "itkGPUImageToImageFilter.h"
 #include "itkGPUMeanImageFilter.h"
 
+#include <string>
 
-int itkGPUImageFilterTest(int argc, char *argv[])
+template< unsigned int VImageDimension >
+int runGPUImageFilterTest(const std::string& inFile, const std::string& outFile)
 {
-  // register object factory for GPU image and filter
-  itk::ObjectFactoryBase::RegisterFactory( itk::GPUImageFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::GPUMeanImageFilterFactory::New() );
-
   typedef   unsigned char  InputPixelType;
   typedef   unsigned char  OutputPixelType;
 
-  typedef itk::Image< InputPixelType,  3 >   InputImageType;
-  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
+  typedef itk::Image< InputPixelType,  VImageDimension >   InputImageType;
+  typedef itk::Image< OutputPixelType, VImageDimension >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-  ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
-  if( argc <  3 )
-    {
-    std::cerr << "Error: missing arguments" << std::endl;
-    std::cerr << "inputfile outputfile " << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  reader->SetFileName( argv[1] );
-  writer->SetFileName( argv[2] );
+  reader->SetFileName( inFile );
+  writer->SetFileName( outFile );
 
   //
   // Note: We use regular itk filter type here but factory will automatically create
@@ -71,15 +62,18 @@ int itkGPUImageFilterTest(int argc, char *argv[])
   typedef itk::MeanImageFilter< InputImageType, OutputImageType > MeanFilterType;
   typedef itk::BinaryThresholdImageFilter< InputImageType, OutputImageType > ThresholdFilterType;
 
-  MeanFilterType::Pointer filter1 = MeanFilterType::New();
-  MeanFilterType::Pointer filter2 = MeanFilterType::New();
-  ThresholdFilterType::Pointer filter3 = ThresholdFilterType::New();
+  typename MeanFilterType::Pointer filter1 = MeanFilterType::New();
+  typename MeanFilterType::Pointer filter2 = MeanFilterType::New();
+  typename ThresholdFilterType::Pointer filter3 = ThresholdFilterType::New();
 
   // Mean filter kernel radius
-  InputImageType::SizeType indexRadius;
+  typename InputImageType::SizeType indexRadius;
   indexRadius[0] = 2; // radius along x
   indexRadius[1] = 2; // radius along y
-  indexRadius[2] = 2; // radius along z
+  if( VImageDimension > 2 )
+  {
+    indexRadius[2] = 2; // radius along z
+  }
 
   // threshold parameters
   const InputPixelType upperThreshold = 255;
@@ -104,4 +98,38 @@ int itkGPUImageFilterTest(int argc, char *argv[])
   writer->Update();
 
   return EXIT_SUCCESS;
+}
+
+int itkGPUImageFilterTest(int argc, char *argv[])
+{
+
+  if( argc <  3 )
+  {
+    std::cerr << "Error: missing arguments" << std::endl;
+    std::cerr << "inputfile outputfile [num_dimensions]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::string inFile( argv[1] );
+  std::string outFile( argv[2] );
+
+  unsigned int dim = 3;
+  if( argc >= 4 )
+  {
+    dim = atoi( argv[3] );
+  }
+
+  if( dim == 2 )
+  {
+    return runGPUImageFilterTest<2>(inFile, outFile);
+  }
+  else if( dim == 3 )
+  {
+    return runGPUImageFilterTest<3>(inFile, outFile);
+  }
+  else
+  {
+    std::cerr << "Error: only 2 or 3 dimensions allowed, " << dim << " selected." << std::endl;
+    return EXIT_FAILURE;
+  }
 }

@@ -16,9 +16,14 @@ set(ITKGPUAnisotropicSmoothing-tests
 
 CreateTestDriver(ITKGPUAnisotropicSmoothing "${ITKGPUAnisotropicSmoothing-Test_LIBRARIES}" "${ITKGPUAnisotropicSmoothing-tests}")
 
-itk_add_test(NAME itkGPUGradientAnisotropicDiffusionImageFilterTest
+itk_add_test(NAME itkGPUGradientAnisotropicDiffusionImageFilterTest2D
         COMMAND ITKGPUAnisotropicSmoothingTestDriver itkGPUGradientAnisotropicDiffusionImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
-        ${ITK_TEST_OUTPUT_DIR}/gpuGradientAnisotropicDiffusionImageFilterTest.mha)
+        ${ITK_TEST_OUTPUT_DIR}/gpuGradientAnisotropicDiffusionImageFilterTest2D.mha 2)
+
+itk_add_test(NAME itkGPUGradientAnisotropicDiffusionImageFilterTest3D
+        COMMAND ITKGPUAnisotropicSmoothingTestDriver itkGPUGradientAnisotropicDiffusionImageFilterTest
+        ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
+        ${ITK_TEST_OUTPUT_DIR}/gpuGradientAnisotropicDiffusionImageFilterTest3D.mha 3)
 
 endif(ITK_USE_GPU)

@@ -17,14 +17,24 @@ set(ITKGPUSmoothing-tests
 
 CreateTestDriver(ITKGPUSmoothing "${ITKGPUSmoothing-Test_LIBRARIES}" "${ITKGPUSmoothing-tests}")
 
-itk_add_test(NAME itkGPUMeanImageFilterTest
+itk_add_test(NAME itkGPUMeanImageFilterTest2D
         COMMAND ITKGPUSmoothingTestDriver itkGPUMeanImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
-        ${ITK_TEST_OUTPUT_DIR}/gpuMeanImageFilterTest.png)
+        ${ITK_TEST_OUTPUT_DIR}/gpuMeanImageFilterTest2D.png 2)
 
-itk_add_test(NAME itkGPUDiscreteGaussianImageFilterTest
+itk_add_test(NAME itkGPUMeanImageFilterTest3D
+        COMMAND ITKGPUSmoothingTestDriver itkGPUMeanImageFilterTest
+        ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
+        ${ITK_TEST_OUTPUT_DIR}/gpuMeanImageFilterTest3D.png 3)
+
+itk_add_test(NAME itkGPUDiscreteGaussianImageFilterTest2D
         COMMAND ITKGPUSmoothingTestDriver itkGPUDiscreteGaussianImageFilterTest
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
-        ${ITK_TEST_OUTPUT_DIR}/gpuGradientDiscreteGaussianImageFilterTest.mha)
+        ${ITK_TEST_OUTPUT_DIR}/gpuGradientDiscreteGaussianImageFilterTest2D.mha 2)
+
+itk_add_test(NAME itkGPUDiscreteGaussianImageFilterTest3D
+        COMMAND ITKGPUSmoothingTestDriver itkGPUDiscreteGaussianImageFilterTest
+        ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySlice.png
+        ${ITK_TEST_OUTPUT_DIR}/gpuGradientDiscreteGaussianImageFilterTest3D.mha 3)
 
 endif(ITK_USE_GPU)

@@ -35,25 +35,15 @@
  * Testing GPU Discrete Gaussian Image Filter
  */
 
-#define ImageDimension 3 //2
-
-int itkGPUDiscreteGaussianImageFilterTest(int argc, char *argv[])
+template< unsigned int VImageDimension >
+int runGPUDiscreteGaussianImageFilterTest(const std::string& inFile, const std::string& outFile)
 {
-  if(!itk::IsGPUAvailable())
-  {
-    std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
-    return EXIT_FAILURE;
-  }
 
   typedef float InputPixelType;
   typedef float OutputPixelType;
 
-
-  //typedef itk::Image< InputPixelType,  3 >   InputImageType;
-  //typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
-
-  typedef itk::GPUImage< InputPixelType,  ImageDimension >   InputImageType;
-  typedef itk::GPUImage< OutputPixelType, ImageDimension >   OutputImageType;
+  typedef itk::GPUImage< InputPixelType,  VImageDimension >   InputImageType;
+  typedef itk::GPUImage< OutputPixelType, VImageDimension >   OutputImageType;
 
   typedef itk::DiscreteGaussianImageFilter< InputImageType, OutputImageType> CPUFilterType;
   typedef itk::GPUDiscreteGaussianImageFilter< InputImageType, OutputImageType> GPUFilterType;
@@ -61,29 +51,18 @@ int itkGPUDiscreteGaussianImageFilterTest(int argc, char *argv[])
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-  ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
-
- if( argc <  3 )
-  {
-    std::cerr << "Error: missing arguments" << std::endl;
-    std::cerr << "inputfile outputfile " << std::endl;
-    return EXIT_FAILURE;
-    //reader->SetFileName( "C:/Users/wkjeong/Proj/ITK/Modules/GPU/Common/data/input-testvolume.nrrd" );
-  }
-  else
-  {
-    reader->SetFileName( argv[1] );
-    writer->SetFileName( argv[2] );
-  }
+  reader->SetFileName( inFile );
+  writer->SetFileName( outFile );
 
   float variance = 4.0;
 
   // test 1~8 threads for CPU
   for(int nThreads = 1; nThreads <= 8; nThreads++)
   {
-    CPUFilterType::Pointer CPUFilter = CPUFilterType::New();
+    typename CPUFilterType::Pointer CPUFilter = CPUFilterType::New();
 
     itk::TimeProbe cputimer;
     cputimer.Start();
@@ -103,7 +82,7 @@ int itkGPUDiscreteGaussianImageFilterTest(int argc, char *argv[])
 
     if( nThreads == 8 )
     {
-      GPUFilterType::Pointer GPUFilter = GPUFilterType::New();
+      typename GPUFilterType::Pointer GPUFilter = GPUFilterType::New();
 
       itk::TimeProbe gputimer;
       gputimer.Start();
@@ -169,4 +148,43 @@ int itkGPUDiscreteGaussianImageFilterTest(int argc, char *argv[])
   }
 
   return EXIT_SUCCESS;
+}
+
+int itkGPUDiscreteGaussianImageFilterTest(int argc, char *argv[])
+{
+  if(!itk::IsGPUAvailable())
+  {
+    std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+ if( argc <  3 )
+  {
+    std::cerr << "Error: missing arguments" << std::endl;
+    std::cerr << "inputfile outputfile [num_dimensions]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::string inFile( argv[1] );
+  std::string outFile( argv[2] );
+
+  unsigned int dim = 3;
+  if( argc >= 4 )
+  {
+    dim = atoi( argv[3] );
+  }
+
+  if( dim == 2 )
+  {
+    return runGPUDiscreteGaussianImageFilterTest<2>(inFile, outFile);
+  }
+  else if( dim == 3 )
+  {
+    return runGPUDiscreteGaussianImageFilterTest<3>(inFile, outFile);
+  }
+  else
+  {
+    std::cerr << "Error: only 2 or 3 dimensions allowed, " << dim << " selected." << std::endl;
+    return EXIT_FAILURE;
+  }
 }

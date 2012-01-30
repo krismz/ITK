@@ -32,57 +32,34 @@
  * Testing GPU Neighborhood Operator Image Filter
  */
 
-#define ImageDimension 3 //2
-
-int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
+template< unsigned int VImageDimension >
+int runGPUNeighborhoodOperatorImageFilterTest(const std::string& inFile, const std::string& outFile)
 {
-  if(!itk::IsGPUAvailable())
-  {
-    std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  // register object factory for GPU image and filter
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUImageFactory::New() );
 
   typedef float InputPixelType;
   typedef float OutputPixelType;
 
-
-  //typedef itk::Image< InputPixelType,  3 >   InputImageType;
-  //typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
-
-  typedef itk::GPUImage< InputPixelType,  ImageDimension >   InputImageType;
-  typedef itk::GPUImage< OutputPixelType, ImageDimension >   OutputImageType;
+  typedef itk::GPUImage< InputPixelType,  VImageDimension >   InputImageType;
+  typedef itk::GPUImage< OutputPixelType, VImageDimension >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-  ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
-  if( argc <  3 )
-  {
-    std::cerr << "Error: missing arguments" << std::endl;
-    std::cerr << "inputfile outputfile " << std::endl;
-    return EXIT_FAILURE;
-    //reader->SetFileName( "C:/Users/wkjeong/Proj/ITK/Modules/GPU/Common/data/input-testvolume.nrrd" );
-  }
-  else
-  {
-    reader->SetFileName( argv[1] );
-    writer->SetFileName( argv[2] );
-  }
+  reader->SetFileName( inFile );
+  writer->SetFileName( outFile );
 
   typedef OutputPixelType    RealOutputPixelType;
-  typedef itk::Image< OutputPixelType, ImageDimension >      RealOutputImageType;
+  typedef itk::Image< OutputPixelType, VImageDimension >      RealOutputImageType;
   typedef itk::NumericTraits<RealOutputPixelType>::ValueType RealOutputPixelValueType;
 
   typedef itk::NeighborhoodOperatorImageFilter< InputImageType, OutputImageType, RealOutputPixelValueType > NeighborhoodFilterType;
   typedef itk::GPUNeighborhoodOperatorImageFilter< InputImageType, OutputImageType, RealOutputPixelValueType > GPUNeighborhoodFilterType;
 
   // Create 1D Gaussian operator
-  typedef itk::GaussianOperator< RealOutputPixelValueType, ImageDimension > OperatorType;
+  typedef itk::GaussianOperator< RealOutputPixelValueType, VImageDimension > OperatorType;
 
   OperatorType oper;
   oper.SetDirection(0);
@@ -92,7 +69,7 @@ int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
   // test 1~8 threads for CPU
   for(int nThreads = 1; nThreads <= 8; nThreads++)
   {
-    NeighborhoodFilterType::Pointer CPUFilter = NeighborhoodFilterType::New();
+    typename NeighborhoodFilterType::Pointer CPUFilter = NeighborhoodFilterType::New();
 
     itk::TimeProbe cputimer;
     cputimer.Start();
@@ -112,7 +89,7 @@ int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
 
     if( nThreads == 8 )
     {
-      GPUNeighborhoodFilterType::Pointer GPUFilter = GPUNeighborhoodFilterType::New();
+      typename GPUNeighborhoodFilterType::Pointer GPUFilter = GPUNeighborhoodFilterType::New();
 
       itk::TimeProbe gputimer;
       gputimer.Start();
@@ -178,4 +155,43 @@ int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
   }
 
   return EXIT_SUCCESS;
+}
+
+int itkGPUNeighborhoodOperatorImageFilterTest(int argc, char *argv[])
+{
+  if(!itk::IsGPUAvailable())
+  {
+    std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  if( argc <  3 )
+  {
+    std::cerr << "Error: missing arguments" << std::endl;
+    std::cerr << "inputfile outputfile [num_dimensions]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::string inFile( argv[1] );
+  std::string outFile( argv[2] );
+
+  unsigned int dim = 3;
+  if( argc >= 4 )
+  {
+    dim = atoi( argv[3] );
+  }
+
+  if( dim == 2 )
+  {
+    return runGPUNeighborhoodOperatorImageFilterTest<2>(inFile, outFile);
+  }
+  else if( dim == 3 )
+  {
+    return runGPUNeighborhoodOperatorImageFilterTest<3>(inFile, outFile);
+  }
+  else
+  {
+    std::cerr << "Error: only 2 or 3 dimensions allowed, " << dim << " selected." << std::endl;
+    return EXIT_FAILURE;
+  }
 }

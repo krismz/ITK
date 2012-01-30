@@ -32,49 +32,30 @@
 #include "itkGPUImageToImageFilter.h"
 #include "itkGPUGradientAnisotropicDiffusionImageFilter.h"
 
-int itkGPUGradientAnisotropicDiffusionImageFilterTest(int argc, char *argv[])
+template< unsigned int VImageDimension >
+int runGPUGradientAnisotropicDiffusionImageFilterTest(const std::string& inFile, const std::string& outFile)
 {
-  // register object factory for GPU image and filter
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUImageFactory::New() );
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUGradientAnisotropicDiffusionImageFilterFactory::New() );
-
   typedef float InputPixelType;
   typedef float OutputPixelType;
 
-  typedef itk::GPUImage< InputPixelType,  3 >   InputImageType;
-  typedef itk::GPUImage< OutputPixelType, 3 >   OutputImageType;
+  typedef itk::GPUImage< InputPixelType,  VImageDimension >   InputImageType;
+  typedef itk::GPUImage< OutputPixelType, VImageDimension >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-  if(!itk::IsGPUAvailable())
-  {
-    std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
-    return EXIT_FAILURE;
-  }
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
-  ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
-
-  if( argc <  3 )
-  {
-    std::cerr << "Error: missing arguments" << std::endl;
-    std::cerr << "inputfile outputfile " << std::endl;
-    return EXIT_FAILURE;
-    //reader->SetFileName( "C:/Users/wkjeong/Proj/ITK/Modules/GPU/Common/data/input-testvolume.nrrd" );
-  }
-  else
-  {
-    reader->SetFileName( argv[1] );
-    writer->SetFileName( argv[2] );
-  }
+  reader->SetFileName( inFile );
+  writer->SetFileName( outFile );
 
   // Create CPU/GPU anistorpic diffusion filter
   typedef itk::GradientAnisotropicDiffusionImageFilter< InputImageType, OutputImageType > CPUAnisoDiffFilterType;
   typedef itk::GPUGradientAnisotropicDiffusionImageFilter< InputImageType, OutputImageType > GPUAnisoDiffFilterType;
 
-  CPUAnisoDiffFilterType::Pointer CPUFilter = CPUAnisoDiffFilterType::New();
-  GPUAnisoDiffFilterType::Pointer GPUFilter = GPUAnisoDiffFilterType::New();
+  typename CPUAnisoDiffFilterType::Pointer CPUFilter = CPUAnisoDiffFilterType::New();
+  typename GPUAnisoDiffFilterType::Pointer GPUFilter = GPUAnisoDiffFilterType::New();
 
   reader->Update();
 
@@ -182,4 +163,43 @@ int itkGPUGradientAnisotropicDiffusionImageFilterTest(int argc, char *argv[])
   }
 
   return EXIT_SUCCESS;
+}
+
+int itkGPUGradientAnisotropicDiffusionImageFilterTest(int argc, char *argv[])
+{
+  if(!itk::IsGPUAvailable())
+  {
+    std::cerr << "OpenCL-enabled GPU is not present." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  if( argc <  3 )
+  {
+    std::cerr << "Error: missing arguments" << std::endl;
+    std::cerr << "inputfile outputfile [num_dimensions]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::string inFile( argv[1] );
+  std::string outFile( argv[2] );
+
+  unsigned int dim = 3;
+  if( argc >= 4 )
+  {
+    dim = atoi( argv[3] );
+  }
+
+  if( dim == 2 )
+  {
+    return runGPUGradientAnisotropicDiffusionImageFilterTest<2>(inFile, outFile);
+  }
+  else if( dim == 3 )
+  {
+    return runGPUGradientAnisotropicDiffusionImageFilterTest<3>(inFile, outFile);
+  }
+  else
+  {
+    std::cerr << "Error: only 2 or 3 dimensions allowed, " << dim << " selected." << std::endl;
+    return EXIT_FAILURE;
+  }
 }

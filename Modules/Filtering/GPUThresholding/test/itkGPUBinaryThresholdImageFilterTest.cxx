@@ -33,25 +33,20 @@
 #include "itkGPUImageToImageFilter.h"
 #include "itkGPUBinaryThresholdImageFilter.h"
 
-#define ImageDimension 3 //2
-
-int itkGPUBinaryThresholdImageFilterTest(int argc, char *argv[])
+template< unsigned int VImageDimension >
+int runGPUBinaryThresholdImageFilterTest(const std::string& inFile, const std::string& outFile)
 {
-  // register object factory for GPU image and filter
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUImageFactory::New() );
-  //itk::ObjectFactoryBase::RegisterFactory( itk::GPUBinaryThresholdImageFilterFactory::New() );
-
   typedef   unsigned char  InputPixelType;
   typedef   unsigned char  OutputPixelType;
 
-  typedef itk::GPUImage< InputPixelType,  ImageDimension >   InputImageType;
-  typedef itk::GPUImage< OutputPixelType, ImageDimension >   OutputImageType;
+  typedef itk::GPUImage< InputPixelType,  VImageDimension >   InputImageType;
+  typedef itk::GPUImage< OutputPixelType, VImageDimension >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-  ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
   if(!itk::IsGPUAvailable())
   {
@@ -59,18 +54,8 @@ int itkGPUBinaryThresholdImageFilterTest(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-  if( argc <  3 )
-  {
-    std::cerr << "Error: missing arguments" << std::endl;
-    std::cerr << "inputfile outputfile " << std::endl;
-    return EXIT_FAILURE;
-    //reader->SetFileName( "../TestData/input-testvolume.nrrd" );
-  }
-  else
-  {
-    reader->SetFileName( argv[1] );
-    writer->SetFileName( argv[2] );
-  }
+  reader->SetFileName( inFile );
+  writer->SetFileName( outFile );
 
   typedef itk::BinaryThresholdImageFilter< InputImageType, OutputImageType > ThresholdFilterType;
   typedef itk::GPUBinaryThresholdImageFilter< InputImageType, OutputImageType > GPUThresholdFilterType;
@@ -83,7 +68,7 @@ int itkGPUBinaryThresholdImageFilterTest(int argc, char *argv[])
 
   for(int nThreads = 1; nThreads <= 8; nThreads++)
   {
-    ThresholdFilterType::Pointer CPUFilter = ThresholdFilterType::New();
+    typename ThresholdFilterType::Pointer CPUFilter = ThresholdFilterType::New();
     itk::TimeProbe cputimer;
     cputimer.Start();
 
@@ -105,7 +90,7 @@ int itkGPUBinaryThresholdImageFilterTest(int argc, char *argv[])
 
     if( nThreads == 8 )
     {
-      GPUThresholdFilterType::Pointer GPUFilter = GPUThresholdFilterType::New();
+      typename GPUThresholdFilterType::Pointer GPUFilter = GPUThresholdFilterType::New();
 
       itk::TimeProbe gputimer;
       gputimer.Start();
@@ -171,60 +156,36 @@ int itkGPUBinaryThresholdImageFilterTest(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 
-
-/**
- * Testing GPU Binary Threshold Filter
- *
 int itkGPUBinaryThresholdImageFilterTest(int argc, char *argv[])
 {
-  // register object factory for GPU image and filter
-  itk::ObjectFactoryBase::RegisterFactory( itk::GPUImageFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::GPUBinaryThresholdImageFilterFactory::New() );
-
-  typedef   unsigned char  InputPixelType;
-  typedef   unsigned char  OutputPixelType;
-
-  typedef itk::Image< InputPixelType,  2 >   InputImageType;
-  typedef itk::Image< OutputPixelType, 2 >   OutputImageType;
-
-  typedef itk::ImageFileReader< InputImageType  >  ReaderType;
-  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
-
-  ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
 
   if( argc <  3 )
-    {
+  {
     std::cerr << "Error: missing arguments" << std::endl;
-    std::cerr << "inputfile outputfile " << std::endl;
+    std::cerr << "inputfile outputfile [num_dimensions]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
-  reader->SetFileName( argv[1] );
-  writer->SetFileName( argv[2] );
+  std::string inFile( argv[1] );
+  std::string outFile( argv[2] );
 
-  typedef itk::BinaryThresholdImageFilter< InputImageType, OutputImageType > ThresholdFilterType;
+  unsigned int dim = 3;
+  if( argc >= 4 )
+  {
+    dim = atoi( argv[3] );
+  }
 
-  ThresholdFilterType::Pointer filter = ThresholdFilterType::New();
-
-  // threshold parameters
-  const InputPixelType upperThreshold = 255;
-  const InputPixelType lowerThreshold = 175;
-  const OutputPixelType outsideValue = 0;
-  const OutputPixelType insideValue  = 255;
-
-  // build pipeline
-  filter->SetOutsideValue( outsideValue );
-  filter->SetInsideValue(  insideValue  );
-  filter->SetUpperThreshold( upperThreshold );
-  filter->SetLowerThreshold( lowerThreshold );
-  filter->SetInPlace( true );
-  filter->SetInput( reader->GetOutput() );
-  writer->SetInput( filter->GetOutput() );
-
-  // execute pipeline filter and write output
-  writer->Update();
-
-  return EXIT_SUCCESS;
+  if( dim == 2 )
+  {
+    return runGPUBinaryThresholdImageFilterTest<2>(inFile, outFile);
+  }
+  else if( dim == 3 )
+  {
+    return runGPUBinaryThresholdImageFilterTest<3>(inFile, outFile);
+  }
+  else
+  {
+    std::cerr << "Error: only 2 or 3 dimensions allowed, " << dim << " selected." << std::endl;
+    return EXIT_FAILURE;
+  }
 }
-*/

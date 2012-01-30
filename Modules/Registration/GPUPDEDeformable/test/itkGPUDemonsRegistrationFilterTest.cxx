@@ -66,7 +66,7 @@ public:
   typename TRegistration::Pointer m_Process;
 };
 
-const unsigned int Dimension = 2;
+const unsigned int Dimension = 3;
 const unsigned int numOfIterations = 2000;
 
 itk::TimeProbe gpuTime, cpuTime;
